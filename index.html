@@ -353,10 +353,10 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
     <b>Real-data validation · BDG2 hourly sample</b>
     <p>Small ridge forecaster trained on the public Building Data Genome 2 sample: 6,553 hourly rows from two buildings, using lag-24 demand plus calendar features. 80/20 chronological holdout.</p>
     <div class="extra-pair" style="margin-top:10px">
-      <div><span>Test MAPE</span><b class="num" style="color:var(--green)">5.5%</b></div>
-      <div><span>Test MAE</span><b class="num">11.5</b></div>
+      <div><span>Model MAPE</span><b class="num" style="color:var(--green)">5.5%</b></div>
+      <div><span>Lag-24 baseline</span><b class="num">5.31%</b></div>
     </div>
-    <div class="extra-note">Measured-data validation is separate from the simulated digital-twin controller. Dataset: BDG2 sample · source: skforecast datasets · model retrain required for deployment. <a href="https://github.com/skforecast/skforecast-datasets" target="_blank" rel="noreferrer" style="color:var(--teal)">Dataset source ↗</a></div>
+    <div class="extra-note">Test MAE: model 11.5 vs lag-24 baseline 11.93. The baseline is the same-hour-previous-day persistence forecast on the same chronological holdout; this validation demonstrates a real-data pipeline, not superiority over every baseline. Dataset covers two sampled buildings, so results should not be generalized to all building types. <a href="https://github.com/skforecast/skforecast-datasets" target="_blank" rel="noreferrer" style="color:var(--teal)">Dataset source ↗</a></div>
   </div>
 </section>
 
