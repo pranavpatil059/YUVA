@@ -817,7 +817,7 @@ function updateUI(s){
      '<div class="r2"><span>Avoided per year</span><b class="num" style="color:#c6d6f0">'+S.co2Year.toFixed(0)+' tCO₂e</b></div>')+
    card('Renewables','sun','#ffb627',
      r2('Solar today',fmt(cum(M.sol,s.t))+u('kWh'),'a sm')+
-     r2('Piezo marble',(cum(M.pz,s.t)).toFixed(1)+u('kWh'),'sm')+
+     r2('Battery discharge',fmt(Math.max(0,s.bat))+u('kW'),'sm')+
      '<div class="r2"><span>Covering demand now</span><b class="num" style="color:#ffe27a">'+Math.round(renW)+'%</b></div>');
 
   $('zones').innerHTML=s.zones.map((z,i)=>{
@@ -1055,8 +1055,7 @@ function init3D(){
   function tag(name,pos){const el=document.createElement('div');el.className='tag';el.innerHTML=name+'<em></em>';box.appendChild(el);labels.push({el,em:el.querySelector('em'),pos:pos.clone(),name})}
   tag('Solar Panels',new THREE.Vector3(-.4,yT+1.0,.1));
   tag('Battery',new THREE.Vector3(-5.8,1.35,2.2));
-  tag('Piezo Floor',new THREE.Vector3(0,.55,5));
-  tag('Chiller Plant',new THREE.Vector3(-5.7,1.6,-1.5));
+   tag('Chiller Plant',new THREE.Vector3(-5.7,1.6,-1.5));
   tag('Grid',new THREE.Vector3(11,4.5,-5));
 
   /* interaction */
@@ -1158,7 +1157,6 @@ function init3D(){
       let t='';
       if(l.name==='Solar Panels')t=s.sol.toFixed(0)+' kW';
       if(l.name==='Battery')t=Math.round(s.socPct*100)+'% charged';
-      if(l.name==='Piezo Floor')t=s.pz.toFixed(2)+' kW';
       if(l.name==='Chiller Plant')t=(s.hvac*.55).toFixed(0)+' kW';
       if(l.name==='Grid')t=s.grid.toFixed(0)+' kW';
       l.em.textContent=t;
