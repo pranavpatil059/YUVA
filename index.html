@@ -270,7 +270,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
     </div>
     <div class="ctrl">
       <button class="btn on" id="play" aria-label="Play or pause">Pause</button>
-      <select class="btn" id="speed" aria-label="Simulation speed"><option value="1">1x</option><option value="3" selected>3x</option><option value="10">10x</option></select>
+      <select class="btn" id="speed" aria-label="Simulation speed"><option value="0.5" selected>0.5x</option><option value="1">1x</option><option value="3">3x</option><option value="10">10x</option></select>
     </div>
   </div>
   <nav class="subnav"><a href="#hud">Command center</a><a href="#grid">Peak shifting and TOD</a><a href="#hvac">HVAC and comfort</a><a href="#ml">ML models</a><a href="#finance">Savings and carbon</a></nav>
@@ -1171,7 +1171,7 @@ function init3D(){
 }
 
 /* ---------- loop and controls ---------- */
-let t=7,playing=true,speed=3,cur=snap(t),lastUi=0,last=performance.now(),clock=0;
+let t=7,playing=true,speed=0.5,cur=snap(t),lastUi=0,last=performance.now(),clock=0;
 function frame(now){
   const dt=Math.min(.1,(now-last)/1000);last=now;clock+=dt;
   if(playing){t=(t+dt*speed/3)%24;$('tslider').value=t}
