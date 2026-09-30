@@ -290,7 +290,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   </div>
   <div class="charts2">
     <div class="p" style="--acc:#4f8cff"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg>Load shifting</h3><div class="chartbox"><canvas id="cLoad"></canvas></div></div>
-    <div class="p" style="--acc:#ffb627"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Energy forecast</h3><div class="chartbox"><canvas id="cFc"></canvas></div></div>
+    <div class="p" style="--acc:#ffb627"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>AI load forecast</h3><div class="chartbox"><canvas id="cFc"></canvas></div></div>
   </div>
 </div>
 
@@ -344,7 +344,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <div class="sl"><label for="sCur">HVAC cut in peak hours</label><input type="range" id="sCur" min="0" max="50" step="5"><span class="num" id="vCur"></span></div>
       <div class="sl"><label for="sSet">Setpoint raise</label><input type="range" id="sSet" min="0" max="3" step="0.5"><span class="num" id="vSet"></span></div>
       <button class="btn" id="reset">Reset to proposed design</button>
-      <p class="note">Each 1°C setpoint raise cuts HVAC energy by about 6%. Cutting HVAC in peak hours is only comfortable because the building was pre-cooled first.</p>
+      <p class="note">The comfort gate prevents peak-hour HVAC reduction when modeled occupant comfort would fall below the operating threshold.</p>
     </div>
     <div class="card" id="fin"></div>
   </div>
@@ -355,7 +355,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <div><b>Sensors and meters</b><span>Occupancy, CO₂, lux, temperature, sub-meters, inverter</span></div>
       <div><b>Edge gateway</b><span>BACnet, Modbus to MQTT. Real-time control stays on site</span></div>
       <div><b>Cloud data layer</b><span>Time-series store with tariff and weather feeds</span></div>
-      <div><b>ML services</b><span>Forecast, occupancy, fault detection, pre-cool optimiser</span></div>
+      <div><b>AI services</b><span>Load forecast, occupancy, anomaly detection and pre-cool optimisation</span></div>
       <div><b>BMS / DISCOM integration</b><span>Operators, occupant feedback and grid demand-response signals via open APIs</span></div>
     </div>
   </div>
@@ -465,8 +465,8 @@ function model(P){
   S.shifted=Math.max(sum(M.curt),0);
   S.peakDropPct=100*(1-S.pkGrid/S.pkBase);
   S.saveDay=S.cBase-S.cGrid;S.saveYear=S.saveDay*DAYS;
-  S.capex={solar:P.solarKw*42000,bat:P.batKwh*16000,ctrl:2000000,piezo:350000};
-  S.capexTot=S.capex.solar+S.capex.bat+S.capex.ctrl+S.capex.piezo;
+  S.capex={solar:P.solarKw*42000,bat:P.batKwh*16000,ctrl:2000000};
+  S.capexTot=S.capex.solar+S.capex.bat+S.capex.ctrl;
   S.payback=S.saveYear>0?S.capexTot/S.saveYear:Infinity;
   S.co2Base=S.dayBase*CO2F;S.co2Opt=S.dayGrid*CO2F;S.co2Year=(S.co2Base-S.co2Opt)*DAYS/1000;
   S.intensity=S.dayGrid*365/5200;S.intensityBase=S.dayBase*365/5200;
@@ -479,16 +479,17 @@ const R=rng(42);
 const noise=()=>(R()-.5)*2;
 const FC=OCC.map(()=>({a:noise(),b:noise(),o:noise()}));
 function mlSeries(){
-  const fc=[],act=[],lo=[],hi=[],ofc=[],oact=[];
+  const fc=[],baseFc=[],act=[],lo=[],hi=[],ofc=[],oact=[];
   for(let h=0;h<24;h++){
     const f=M.load[h]*(1+0.02*FC[h].a);
+    const b=M.base[h]*(1+0.02*FC[h].a);
     const a=M.load[h]*(1+0.045*FC[h].b);
-    fc.push(f);act.push(a);lo.push(f*0.93);hi.push(f*1.07);
+    fc.push(f);baseFc.push(b);act.push(a);lo.push(f*0.93);hi.push(f*1.07);
     ofc.push(clamp(OCC[h]*(1+0.06*FC[h].o),0,100));oact.push(clamp(OCC[h]*(1+0.10*FC[h].b),0,100));
   }
   const mape=100*sum(act.map((a,h)=>Math.abs(a-fc[h])/a))/24;
   const omae=sum(oact.map((a,h)=>Math.abs(a-ofc[h])))/24;
-  return {fc,act,lo,hi,ofc,oact,mape,omae};
+  return {fc,baseFc,act,lo,hi,ofc,oact,mape,omae};
 }
 let ML=mlSeries();
 
@@ -608,7 +609,6 @@ function buildCharts(){
   charts.mix=new Chart($('cMix'),{type:'line',data:{datasets:[
     ds('Grid',M.grid,mute,{fill:true,backgroundColor:mute+'55',tension:.25}),
     ds('Solar',M.sol,amber,{fill:true,backgroundColor:amber+'99',tension:.25}),
-    ds('Piezo',M.pz,violet,{fill:true,backgroundColor:violet+'99',tension:.25}),
     ds('Battery discharge',M.bat.map(v=>Math.max(0,v)),green,{fill:true,backgroundColor:green+'88',tension:.25})
   ]},options:baseOpts('kW',true),plugins:[bandsPlugin,markerPlugin]});
   const bo=baseOpts('kWh');bo.scales.x={type:'category',ticks:{color:TICK},grid:{display:false}};bo.plugins.tooltip={};
@@ -619,9 +619,10 @@ function buildCharts(){
   const fo=baseOpts('kW',false,true);
   fo.plugins.legend={position:'bottom',labels:{color:TICK,boxWidth:12,filter:i=>i.text!=='Upper band'&&i.text!=='Lower band'}};
   charts.fc=new Chart($('cFc'),{type:'line',data:{datasets:[
-    ds('Upper band',ML.hi,amber+'00',{fill:'+1',backgroundColor:amber+'2a',borderWidth:0}),
-    ds('Lower band',ML.lo,amber+'00',{borderWidth:0}),
-    ds('ML forecast',ML.fc,amber,{borderWidth:2.5,fill:false}),
+    ds('Optimised range',ML.hi,amber+'00',{fill:'+1',backgroundColor:amber+'2a',borderWidth:0}),
+    ds('Optimised range',ML.lo,amber+'00',{borderWidth:0}),
+    ds('Baseline forecast',ML.baseFc,orange,{borderDash:[6,4],borderWidth:2,fill:false}),
+    ds('AI optimised forecast',ML.fc,amber,{borderWidth:3,fill:false}),
     ds('Actual so far',ML.act.map((v,h)=>h<=Math.floor(curT)?v:null),teal,{borderWidth:2.5,fill:true,backgroundColor:gf(teal,'55','05')})
   ]},options:fo,plugins:[bandsPlugin,markerPlugin]});
   const oo=baseOpts('% of capacity');oo.scales.y.max=100;
@@ -633,10 +634,10 @@ function buildCharts(){
 function refreshCharts(){
   const c=charts;
   c.load.data.datasets[0].data=series(M.base);c.load.data.datasets[1].data=series(M.load);c.load.data.datasets[2].data=series(M.grid);
-  c.mix.data.datasets[0].data=series(M.grid);c.mix.data.datasets[1].data=series(M.sol);c.mix.data.datasets[2].data=series(M.pz);c.mix.data.datasets[3].data=series(M.bat.map(v=>Math.max(0,v)));
+  c.mix.data.datasets[0].data=series(M.grid);c.mix.data.datasets[1].data=series(M.sol);c.mix.data.datasets[2].data=series(M.bat.map(v=>Math.max(0,v)));
   c.tod.data.datasets[0].data=['off','normal','peak'].map(k=>S.byBase[k]);c.tod.data.datasets[1].data=['off','normal','peak'].map(k=>S.byGrid[k]);
-  c.fc.data.datasets[0].data=series(ML.hi);c.fc.data.datasets[1].data=series(ML.lo);c.fc.data.datasets[2].data=series(ML.fc);
-  c.fc.data.datasets[3].data=series(ML.act.map((v,h)=>h<=Math.floor(curT)?v:null));
+  c.fc.data.datasets[0].data=series(ML.hi);c.fc.data.datasets[1].data=series(ML.lo);c.fc.data.datasets[2].data=series(ML.baseFc);
+  c.fc.data.datasets[3].data=series(ML.fc);c.fc.data.datasets[4].data=series(ML.act.map((v,h)=>h<=Math.floor(curT)?v:null));
   c.oc.data.datasets[0].data=series(ML.ofc);c.oc.data.datasets[1].data=series(ML.oact.map((v,h)=>h<=Math.floor(curT)?v:null));
   Object.keys(c).forEach(k=>c[k].update('none'));
 }
@@ -660,7 +661,7 @@ function updateStatic(){
   const rows=k=>'<tr><td>'+CLSLABEL[k]+' at ₹'+RATE[k]+'</td><td class="r num">'+fmt(S.byBase[k])+'</td><td class="r num">'+fmt(S.byGrid[k])+'</td><td class="r num">'+inr(S.costBase[k])+'</td><td class="r num">'+inr(S.costGrid[k])+'</td></tr>';
   $('todTable').innerHTML='<tr><th>Band</th><th class="r">Base kWh</th><th class="r">Opt kWh</th><th class="r">Base ₹</th><th class="r">Opt ₹</th></tr>'+rows('off')+rows('normal')+rows('peak')+
     '<tr><td><b>Day total</b></td><td class="r num">'+fmt(S.dayBase)+'</td><td class="r num">'+fmt(S.dayGrid)+'</td><td class="r num">'+inr(S.cBase)+'</td><td class="r num"><b>'+inr(S.cGrid)+'</b></td></tr>';
-  $('mixNote').innerHTML='Solar gives <b class="num">'+fmt(S.sol)+' kWh</b> a day, piezo marble <b class="num">'+S.pz.toFixed(1)+' kWh</b>, and the battery moves <b class="num">'+fmt(S.dis)+' kWh</b> out of the peak. Together they meet <b class="num">'+Math.round(100*S.ren/S.dayLoad)+'%</b> of demand.';
+  $('mixNote').innerHTML='Solar supplies <b class="num">'+fmt(S.sol)+' kWh</b> a day, while the battery shifts <b class="num">'+fmt(S.dis)+' kWh</b> out of peak hours. Together they cover <b class="num">'+Math.round(100*S.ren/S.dayLoad)+'%</b> of modeled building demand.';
   const peakFc=Math.max.apply(null,[9,10,11,18,19,20,21].map(h=>ML.fc[h]));
   $('rec').innerHTML='<b>Recommendation for tomorrow.</b> The load model expects peak-window building demand of about <span class="num">'+fmt(peakFc*1.02)+' kW</span> on a day 1°C warmer. The optimiser schedules pre-cooling at <span class="num">06:00 and 15:00</span>, limits chillers to '+(100-P.curtail)+'% in the peak windows and reserves the battery for <span class="num">18:00 to 21:00</span>. Expected saving: <span class="num">'+inr(S.saveDay*1.03)+'</span>.';
   $('mm1').innerHTML='Forecast error (MAPE) <b class="num">'+ML.mape.toFixed(1)+'%</b>, horizon 24 h';
@@ -673,13 +674,13 @@ function updateStatic(){
   $('fin').innerHTML='<h3>Business case</h3>'+
    st('Annual bill saving',inrL(S.saveYear)+' ('+Math.round(100*S.saveDay/S.cBase)+'%)')+
    st('From efficiency and load shifting',inrL(eff*DAYS)+' a year')+
-   st('From solar, piezo and battery',inrL(rew*DAYS)+' a year')+
+   st('From solar + battery',inrL(rew*DAYS)+' a year')+
    st('Retrofit cost',inrL(S.capexTot))+
    st('Payback',isFinite(S.payback)?S.payback.toFixed(1)+' years':'n/a')+
    st('Energy intensity',Math.round(S.intensity)+' kWh/m²/yr (was '+Math.round(S.intensityBase)+')')+
    st('Carbon avoided',S.co2Year.toFixed(0)+' tCO₂e a year')+
    st('Equal to trees planted',fmt(trees)+' trees')+
-   '<p class="note">Retrofit cost assumes ₹42,000 per kW of solar, ₹16,000 per kWh of battery, ₹20 lakh for sensors, controls and VFDs, and ₹3.5 lakh of piezo tiles. Working days: '+DAYS+' a year.</p>';
+   '<p class="note">Retrofit cost assumes ₹42,000 per kW of solar, ₹16,000 per kWh of battery, ₹20 lakh for sensors, controls and VFDs, Working days: '+DAYS+' a year.</p>';
   $('vSolar').textContent=P.solarKw+' kW';$('vBat').textContent=P.batKwh+' kWh';$('vCur').textContent=P.curtail+'%';$('vSet').textContent='+'+P.setOff+'°C';
 }
 
@@ -1003,12 +1004,6 @@ function init3D(){
   const pyM=MT(0x50586a,{metalness:.4});
   put(bx(.16,4,.16,pyM),11,2,-5);put(bx(1.6,.09,.09,pyM),11,3.7,-5);put(bx(1.1,.09,.09,pyM),11,3.2,-5);
   const lamp=new THREE.Mesh(new THREE.SphereGeometry(.17,16,16),new THREE.MeshBasicMaterial({color:0x888888}));put(lamp,11,4.1,-5);
-  // piezo pad
-  const padTex=tex((g,w,h)=>{g.fillStyle='#0b1220';g.fillRect(0,0,w,h);g.strokeStyle='rgba(60,190,255,.7)';g.lineWidth=2;const n=6;for(let i=0;i<=n;i++){g.beginPath();g.moveTo(i*w/n,0);g.lineTo(i*w/n,h);g.stroke();g.beginPath();g.moveTo(0,i*h/n);g.lineTo(w,i*h/n);g.stroke()}},256,256);
-  put(bx(3.4,.06,2.5,new THREE.MeshStandardMaterial({map:padTex,roughness:.3,metalness:.5})),0,.06,5.0);
-  const padGlow=put(glow('rgba(70,190,255,.9)',3.6),0,.4,5.0);
-  const ringM=new THREE.MeshBasicMaterial({color:0x66d4ff,transparent:true,opacity:.6,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
-  const ring=put(new THREE.Mesh(new THREE.RingGeometry(.35,.42,40),ringM),0,.1,5.0);ring.rotation.x=-Math.PI/2;
   // trees
   const trunkM=MT(0x5a3d26),leafA=MT(0x2f9a48,{roughness:.9}),leafB=MT(0x1f7a3a,{roughness:.9});
   [[-6.6,1.0,1],[-8,-1.5,1.2],[-4.4,-4,1.1],[3,-4.3,1],[8,3.7,1.1],[10.4,1.5,1.2],[-9.2,4.2,1],[-3,3.6,.8],[5.8,4,.9],[9.2,-4.6,1.1],[-10.5,-4,1.2]].forEach((t,i)=>{
@@ -1135,8 +1130,6 @@ function init3D(){
     fans.forEach((f,i)=>{f.rotation.y+=dt*(1+s.hvac/10)*(i===1?1.25:1)});
     cts.forEach(c=>{c.scale.y=1+.03*Math.sin(time*6)});
     const foot=clamp(s.occ/100,0,1);
-    padGlow.material.opacity=.35+.65*foot*(.6+.4*Math.sin(time*3));padGlow.scale.setScalar(2.6+2.0*foot);
-    const rp=(time*.8)%1;ring.scale.setScalar(1+rp*3.2);ringM.opacity=(1-rp)*.7*foot;
     socBar.scale.x=Math.max(.02,s.socPct);socBar.position.x=-5.8-(1-Math.max(.02,s.socPct))*.75;
     lamp.material.color.set(s.cls==='peak'?0xff5a4a:s.cls==='off'?0x3fd68a:0xaab2bd);
     doorGlow.material.opacity=.3+.7*(1-dayF*.6);
