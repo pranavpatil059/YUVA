@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>VoltSense BEMS: Smart Building Digital Twin</title>
+<title>VoltSense BEMS: Smart Building Energy & Occupant Experience</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -166,6 +166,27 @@ td.r,th.r{text-align:right}
 footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
 
 
+
+/* smart-building challenge outcome */
+.smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.smart-card{position:relative;padding:14px;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,rgba(21,38,72,.92),rgba(9,18,38,.95))}
+.smart-card h3{margin:0 0 7px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.smart-value{font:600 29px var(--disp);color:var(--teal);line-height:1.1}
+.smart-value.g{color:var(--green)} .smart-value.a{color:var(--amber)} .smart-value.v{color:var(--violet)}
+.smart-sub{font-size:12px;color:var(--mute);margin-top:4px}
+.smart-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.smart-compare div{padding:8px;border-radius:6px;background:rgba(20,36,68,.55);border:1px solid rgba(86,140,230,.18)}
+.smart-compare b{display:block;font:600 18px var(--disp);margin-top:2px}
+.smart-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:12px}
+.smart-flow div{padding:12px;background:rgba(20,36,68,.55);border:1px solid var(--line);position:relative}
+.smart-flow div+div{border-left:0}
+.smart-flow div:first-child{border-radius:8px 0 0 8px}.smart-flow div:last-child{border-radius:0 8px 8px 0}
+.smart-flow b{display:block;font-family:var(--disp);font-size:14px}.smart-flow span{font-size:12px;color:var(--mute)}
+.smart-action{margin-top:12px;border-left:4px solid var(--teal);padding:12px 14px;background:rgba(59,227,247,.06);border-radius:0 8px 8px 0}
+.smart-action b{color:var(--teal)}
+@media(max-width:1000px){.smart-grid{grid-template-columns:repeat(2,1fr)}.smart-flow{grid-template-columns:1fr 1fr}.smart-flow div+div{border-left:1px solid var(--line)}.smart-flow div:nth-child(3){border-radius:0 0 0 8px}.smart-flow div:nth-child(4){border-radius:0 0 8px 0}}
+@media(max-width:640px){.smart-grid{grid-template-columns:1fr}.smart-flow{grid-template-columns:1fr}.smart-flow div+div{border-left:1px solid var(--line);border-top:0}.smart-flow div:first-child{border-radius:8px 8px 0 0}.smart-flow div:last-child{border-radius:0 0 8px 8px}}
+
 /* electrical health dashboard */
 .elec-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
 .elec-meters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -217,7 +238,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 <body>
 <header class="rail">
   <div class="rail-in">
-    <div class="brand"><div class="logo">V</div><div><b>VoltSense BEMS</b><small>Tower A digital twin, simulation mode</small></div></div>
+    <div class="brand"><div class="logo">V</div><div><b>VoltSense BEMS</b><small>Smart building energy, comfort & digital twin</small></div></div>
     <div class="scrub">
       <div class="scrub-top"><span>Simulated day: drag to travel through time</span><span class="clk num" id="clk">00:00</span></div>
       <div class="track" id="track">
@@ -232,7 +253,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <select class="btn" id="speed" aria-label="Simulation speed"><option value="1">1x</option><option value="3" selected>3x</option><option value="10">10x</option></select>
     </div>
   </div>
-  <nav class="subnav"><a href="#hud">Command center</a><a href="#grid">Peak shifting and TOD</a><a href="#hvac">HVAC and comfort</a><a href="#electrical">Electrical health</a><a href="#ml">ML models</a><a href="#finance">Savings and carbon</a></nav>
+  <nav class="subnav"><a href="#hud">Command center</a><a href="#smart">Smart building outcomes</a><a href="#grid">Peak shifting & grid response</a><a href="#hvac">HVAC & comfort</a><a href="#electrical">Electrical health</a><a href="#ml">AI models</a><a href="#finance">Savings & economics</a></nav>
 </header>
 
 <main>
@@ -256,6 +277,11 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   </div>
 </div>
 
+<section id="smart">
+  <div class="sec-head"><h2>Smart building energy & occupant experience</h2><p>VoltSense combines energy, occupancy and indoor conditions to optimise building operation, shift flexible loads away from peaks, and preserve comfort. The 3D digital twin remains the visual control surface for the building.</p></div>
+  <div id="smartDash"></div>
+</section>
+
 <section id="grid">
   <div class="sec-head"><h2>Peak load shifting and time-of-day tariff</h2><p>The building cools itself before the tariff peak, coasts through it on stored cold and battery power, then recovers on cheaper units.</p></div>
   <div class="card"><div class="steps" id="steps" style="margin-top:0"></div></div>
@@ -276,12 +302,12 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 
 
 <section id="electrical">
-  <div class="sec-head"><h2>Real-time electrical health & predictive fault map</h2><p>Commercial-building electrical intelligence across AC distribution, DC equipment and major loads. The simulator shows how harmonics and electrical disturbances can affect sensitive AC equipment before a visible failure occurs.</p></div>
+  <div class="sec-head"><h2>Electrical health & predictive maintenance — advanced layer</h2><p>Power-quality and equipment diagnostics remain part of the BEMS: AC distribution, DC/UPS loads, harmonics, voltage unbalance and equipment health are monitored alongside energy and comfort.</p></div>
   <div id="elecDash"></div>
 </section>
 
 <section id="ml">
-  <div class="sec-head"><h2>Machine learning layer</h2><p>Three models feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
+  <div class="sec-head"><h2>AI optimisation & prediction layer</h2><p>Three models feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
   <div class="rec" id="rec"></div>
   <div class="grid2e" style="margin-top:14px">
     <div class="card"><h3>Occupancy forecast</h3><div class="chartbox sm"><canvas id="cOc"></canvas></div></div>
@@ -295,7 +321,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 </section>
 
 <section id="finance">
-  <div class="sec-head"><h2>Savings, payback and carbon</h2><p>Change the design and see the business case move. Costs are typical Indian commercial rates, editable in the code.</p></div>
+  <div class="sec-head"><h2>Energy savings, retrofit economics & carbon</h2><p>Change the design and see the business case move. Costs are typical Indian commercial rates, editable in the code.</p></div>
   <div class="grid2e">
     <div class="card">
       <h3>What-if design</h3>
@@ -316,7 +342,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <div><b>Edge gateway</b><span>BACnet, Modbus to MQTT. Real-time control stays on site</span></div>
       <div><b>Cloud data layer</b><span>Time-series store with tariff and weather feeds</span></div>
       <div><b>ML services</b><span>Forecast, occupancy, fault detection, pre-cool optimiser</span></div>
-      <div><b>This dashboard</b><span>Operators, occupants and grid demand-response signals</span></div>
+      <div><b>BMS / DISCOM integration</b><span>Operators, occupant feedback and grid demand-response signals via open APIs</span></div>
     </div>
   </div>
 </section>
@@ -720,9 +746,48 @@ function updateElectrical(s){
    '</div>';
 }
 
+
+function updateSmartBuilding(s){
+  const saved=Math.max(0,S.dayBase-S.dayGrid);
+  const pct=S.dayBase>0?100*saved/S.dayBase:0;
+  const peakDrop=Math.max(0,S.peakDropPct);
+  const flexible=Math.max(0,(s.hvac*Math.max(P.curtail,0)/100)+Math.max(0,s.bat));
+  const comfort=Math.round(s.comfort);
+  const comfortCls=comfort>=90?'g':comfort>=75?'a':'';
+  let action,detail;
+  if(s.mode==='precool'){
+    action='Pre-cool before peak';
+    detail='Use lower-tariff hours and mild outdoor conditions to reduce later HVAC demand.';
+  }else if(s.mode==='dr'){
+    action='Demand response active';
+    detail='Trim flexible HVAC load and use stored energy while keeping occupied zones within comfort limits.';
+  }else if(s.mode==='setback'){
+    action='Low-occupancy setback';
+    detail='Reduce HVAC and lighting in lightly occupied zones instead of conditioning empty space.';
+  }else{
+    action='Occupancy-aware optimisation';
+    detail='Continuously balance load, occupancy, indoor air quality and thermal comfort.';
+  }
+  $('smartDash').innerHTML=
+    '<div class="smart-grid">'+
+      '<div class="smart-card"><h3>Energy efficiency</h3><div class="smart-value">'+fmt(saved)+' kWh/day</div><div class="smart-sub">estimated reduction vs baseline</div><div class="smart-compare"><div><span class="smart-sub">Baseline</span><b class="num">'+fmt(S.dayBase)+' kWh</b></div><div><span class="smart-sub">Optimised</span><b class="num" style="color:var(--green)">'+fmt(S.dayGrid)+' kWh</b></div></div><div class="smart-sub"><b>'+pct.toFixed(1)+'%</b> modeled reduction</div></div>'+
+      '<div class="smart-card"><h3>Occupant experience</h3><div class="smart-value '+comfortCls+'">'+comfort+' / 100</div><div class="smart-sub">live comfort score</div><div class="smart-compare"><div><span class="smart-sub">Occupancy</span><b class="num">'+Math.round(s.occ)+'%</b></div><div><span class="smart-sub">Highest CO₂</span><b class="num">'+Math.max.apply(null,s.zones.map(z=>z.co2))+' ppm</b></div></div><div class="smart-sub">'+(comfort>=90?'Comfort conditions maintained':'Comfort threshold needs attention')+'</div></div>'+
+      '<div class="smart-card"><h3>Grid responsiveness</h3><div class="smart-value a">'+Math.round(peakDrop)+'%</div><div class="smart-sub">peak-window grid-demand reduction</div><div class="smart-compare"><div><span class="smart-sub">Flexible now</span><b class="num">'+flexible.toFixed(0)+' kW</b></div><div><span class="smart-sub">Mode</span><b style="font-size:16px">'+(s.mode==='dr'?'Demand response':s.mode==='precool'?'Pre-cooling':'Auto')+'</b></div></div><div class="smart-sub">Pre-cooling + battery + load shifting</div></div>'+
+      '<div class="smart-card"><h3>AI action now</h3><div class="smart-value v" style="font-size:23px">'+action+'</div><div class="smart-sub" style="margin-top:8px">'+detail+'</div><div class="smart-action"><b>Comfort gate:</b> control actions are allowed only while occupied-zone comfort stays within the modeled threshold.</div></div>'+
+    '</div>'+
+    '<div class="smart-flow">'+
+      '<div><b>1 · Sense</b><span>Energy meters, occupancy, CO₂, temperature, lighting and equipment health</span></div>'+
+      '<div><b>2 · Predict</b><span>Load forecast + occupancy forecast + anomaly detection</span></div>'+
+      '<div><b>3 · Optimise</b><span>HVAC, lighting, battery and flexible loads respond to tariff and occupancy</span></div>'+
+      '<div><b>4 · Verify</b><span>kWh saved, peak reduction and comfort are measured against the baseline</span></div>'+
+    '</div>'+
+    '<p class="note">Demonstration values are simulated. The energy-saving percentage is calculated from the modeled baseline and optimised grid consumption, not from a real building meter.</p>';
+}
+
 function updateUI(s){
   $('clk').textContent=hhmm(s.t);
   updateElectrical(s);
+  updateSmartBuilding(s);
   $('needle').style.left=(s.t/24*100)+'%';
   const savedKwh=Math.max(0,cum(M.base,s.t)-cum(M.grid,s.t));
   const savedRs=Math.max(0,cumCost(M.base,s.t)-cumCost(M.grid,s.t));
