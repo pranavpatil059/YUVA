@@ -209,7 +209,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   .hud{grid-template-columns:1fr 1fr}
   .stage{grid-column:1/-1;order:-1;min-height:560px}
   .kpis{grid-template-columns:repeat(3,1fr)}
-  .grid2,.grid2e,.grid3,.charts2{grid-template-columns:1fr}
+  .grid2,.grid2e,.grid3,.building-grid,.charts2{grid-template-columns:1fr 1fr}
   .zones{grid-template-columns:repeat(2,1fr)}
   .steps{grid-template-columns:1fr}
   .arch{grid-template-columns:1fr}
@@ -221,7 +221,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 @media (max-width:640px){
   .hud{grid-template-columns:1fr}
   .stage{min-height:430px}
-  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpis{grid-template-columns:repeat(2,1fr)}\n  .building-grid{grid-template-columns:1fr}
   .kpi .nv{font-size:26px}
   .sl{grid-template-columns:1fr 60px} .sl label{grid-column:1/-1}
   .zones{grid-template-columns:1fr}
