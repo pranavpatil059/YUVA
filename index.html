@@ -301,7 +301,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   <div id="elecDash"></div>
 </section>
 <section id="ml">
-  <div class="sec-head"><h2>AI optimisation & prediction layer</h2><p>Three models feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
+  <div class="sec-head"><h2>AI optimisation & prediction layer</h2><p>Three model concepts feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
   <div class="rec" id="rec"></div>
   <div class="grid2e" style="margin-top:14px">
     <div class="card"><h3>Occupancy forecast</h3><div class="chartbox sm"><canvas id="cOc"></canvas></div></div>
@@ -339,8 +339,29 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <div><b>BMS / DISCOM integration</b><span>Operators, occupant feedback and grid demand-response signals via open APIs</span></div>
     </div>
   </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Retrofit, building typology & India-scale deployment</h3>
+    <p class="note" style="margin-top:0">Start with the loads that matter most; keep existing HVAC, lighting and BMS where possible. The prototype is designed for staged retrofit rather than a full-building replacement.</p>
+    <div class="grid3" style="margin-top:12px">
+      <div class="model"><b>Commercial office / IT</b><p>Occupancy + CO₂ + sub-metering → HVAC/lighting schedules → peak demand response.</p><div class="m">High-value first retrofit</div></div>
+      <div class="model"><b>Retail / hospitality</b><p>Variable occupancy + thermal zones → pre-cooling and lighting optimisation without disrupting customer areas.</p><div class="m">Zone-by-zone rollout</div></div>
+      <div class="model"><b>Campus / institutional</b><p>Calendar-aware schedules + room occupancy → avoid conditioning empty spaces and verify savings per building.</p><div class="m">Replicable building template</div></div>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="model"><b>Hot-dry</b><p>Prioritise pre-cooling, peak shifting, solar and HVAC optimisation during high cooling demand.</p><div class="m">Climate adaptation</div></div>
+      <div class="model"><b>Warm-humid</b><p>Track temperature + CO₂ and add humidity-aware HVAC control where sensors are available.</p><div class="m">Climate adaptation</div></div>
+      <div class="model"><b>Composite / temperate / cold</b><p>Swap seasonal control rules for cooling, heating, ventilation and setback while keeping the same sensing and analytics layer.</p><div class="m">Same platform, local rules</div></div>
+    </div>
+    <div class="smart-flow" style="margin-top:14px">
+      <div><b>1 · Measure</b><span>Install smart meters and low-cost indoor sensors at main incomers and priority zones.</span></div>
+      <div><b>2 · Connect</b><span>Use BACnet/Modbus/MQTT at the edge; integrate with an existing BMS where available.</span></div>
+      <div><b>3 · Optimise</b><span>Enable occupancy-aware HVAC/lighting, pre-cooling and demand-response controls.</span></div>
+      <div><b>4 · Verify</b><span>Compare baseline vs optimised kWh, peak kW, comfort and indoor-air indicators.</span></div>
+    </div>
+    <p class="note" style="margin:14px 0 0"><b>Retrofit economics:</b> the interactive design model above calculates indicative capex and payback as solar, battery and controls are changed. Costs and savings are explicitly demonstration assumptions, not quotations.</p>
+  </div>
 </section>
-<footer>All figures are simulated for a demonstration building. Emission factor 0.82 kg CO₂ per kWh (Indian grid average, assumption). Piezoelectric output is a small assumed value and is shown mainly as a demonstrator.</footer>
+<footer>All figures are simulated for a demonstration building. Emission factor 0.82 kg CO₂ per kWh (Indian grid average, assumption). All energy, comfort, cost and equipment values are simulated demonstration assumptions; validate them with measured building data before deployment.</footer>
 </main>
 
 <script>
