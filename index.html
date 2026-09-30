@@ -106,7 +106,7 @@ section{margin-top:44px}
 .col .p{flex:1}
 .stage{position:relative;min-height:560px}
 .twin{position:absolute;inset:0;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#0b1a3a;box-shadow:0 0 34px rgba(40,100,230,.18)}
-.twin canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab;z-index:1}
+.twin canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab;z-index:2;background:transparent}
 .twin canvas:active{cursor:grabbing}
 .vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,transparent 55%,rgba(3,8,20,.75) 100%)}
 .tag{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--disp);font-weight:600;font-size:13px;padding:5px 12px 6px;border-radius:5px;background:rgba(14,24,44,.92);border:1px solid rgba(190,215,255,.65);color:#fff;white-space:nowrap;transform:translate(-50%,-135%);text-align:center;line-height:1.15}
@@ -209,7 +209,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 .hero-intro p{margin:4px 0 0;color:var(--mute);font-size:12.5px}
 .hero-status{display:flex;align-items:center;gap:9px;white-space:nowrap;padding:8px 11px;border:1px solid rgba(59,227,247,.3);border-radius:999px;background:rgba(59,227,247,.055);font-size:12px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
-.twin-fallback{position:absolute;inset:0;z-index:0;overflow:hidden;background:radial-gradient(circle at 50% 36%,rgba(37,87,150,.48),rgba(6,16,36,.95) 66%);pointer-events:none}
+.twin-fallback{position:absolute;inset:0;z-index:1;overflow:hidden;background:radial-gradient(circle at 50% 36%,rgba(37,87,150,.48),rgba(6,16,36,.95) 66%);pointer-events:none}
 .twin-fallback .fb-sky{position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,72,126,.32),transparent 62%)}
 .fb-building{position:absolute;left:50%;top:23%;width:min(430px,62%);height:54%;transform:translateX(-50%) perspective(700px) rotateX(2deg);filter:drop-shadow(0 24px 24px rgba(0,0,0,.42))}
 .fb-floor{position:absolute;left:0;width:100%;height:18%;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px 14px;background:linear-gradient(135deg,#2b4666,#182b47);border:1px solid rgba(113,190,255,.42);box-shadow:inset 0 0 20px rgba(46,170,255,.12),0 4px 10px rgba(0,0,0,.25);transform:skewY(-3deg)}
@@ -1173,7 +1173,6 @@ function init3D(){
   const mixHex=(a,b,f)=>new THREE.Color(a).lerp(new THREE.Color(b),f);
   const fogC=new THREE.Color();
   scene3.ok=true;
-  const fallback=box.querySelector(".twin-fallback"); if(fallback) fallback.style.display="none";
   scene3.update=function(s,dt,time){
     floors.forEach((m,i)=>{
       const z=s.zones[i];
