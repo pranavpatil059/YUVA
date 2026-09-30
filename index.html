@@ -123,7 +123,7 @@ section{margin-top:44px}
 
 /* detail sections */
 .grid2e{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}\n.building-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}\n.building-grid .model{min-width:0}
 .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(86,140,230,.18);white-space:nowrap}
@@ -341,10 +341,11 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   </div>
   <div class="card" style="margin-top:14px">
     <div class="sec-head" style="margin-bottom:12px"><h3>Retrofit & India-scale deployment</h3><p>One sensing and analytics layer, adapted to building type, climate and existing BMS infrastructure.</p></div>
-    <div class="grid3">
-      <div class="model"><b>Commercial / IT</b><p>Occupancy + CO₂ + sub-metering for HVAC, lighting and peak-demand control.</p><div class="m">High-value retrofit</div></div>
-      <div class="model"><b>Retail / Hospitality</b><p>Zone-wise occupancy, pre-cooling and lighting optimisation with minimal disruption.</p><div class="m">Phased rollout</div></div>
-      <div class="model"><b>Campus / Institutional</b><p>Calendar + occupancy schedules to avoid conditioning empty spaces and verify savings by building.</p><div class="m">Replicable template</div></div>
+    <div class="building-grid">
+      <div class="model"><b>Commercial / IT</b><p>HVAC + lighting + peak-demand optimisation.</p><div class="m">Office / tower</div></div>
+      <div class="model"><b>Hotel</b><p>Room occupancy + thermal-zone control.</p><div class="m">Guest comfort</div></div>
+      <div class="model"><b>Hostel / Campus</b><p>Schedule-aware rooms + common-area loads.</p><div class="m">Replicable</div></div>
+      <div class="model"><b>Residential</b><p>Occupancy + common services + demand response.</p><div class="m">Scalable template</div></div>
     </div>
     <div class="smart-flow" style="margin-top:12px">
       <div><b>Measure</b><span>Smart meters + low-cost indoor sensors</span></div>
@@ -744,12 +745,15 @@ function updateUI(s){
   const renW=s.load>0?clamp((s.sol+s.pz+Math.max(0,s.bat))/s.load*100,0,100):0;
   const anom=s.t>=14.33;
   const cc=s.comfort>=90?'g':s.comfort>=75?'a':'r';
+  const energyPct=S.dayBase>0?100*(S.dayBase-S.dayGrid)/S.dayBase:0;
+  const peakPct=S.pkBase>0?100*(S.pkBase-S.pkGrid)/S.pkBase:0;
+  const aiAction=s.mode==='precool'?'Pre-cooling selected':s.mode==='dr'?'Peak demand response':s.mode==='setback'?'Low-occupancy setback':'Occupancy-aware control';
   $('kpis').innerHTML=
-   '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saved today</h4><div class="kv"><b class="nv">'+fmt(savedKwh)+u('kWh')+'</b><b class="nv a">'+inr(savedRs)+'</b></div></div>'+
-   '<div class="p kpi" style="--acc:#8dff5c"><h4>Comfort score</h4><div class="kv"><b class="nv '+cc+'" style="font-size:40px">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:24px;color:#dbe8ff">/ 100</b></div></div>'+
-   '<div class="p kpi" style="--acc:#ff6a3d"><h4>System alerts</h4><div class="kv"><b class="nv o" style="display:flex;align-items:center;gap:8px"><span style="width:26px;height:26px;display:inline-block">'+ic('pin').replace('class="ic"','class="ic" style="width:26px;height:26px;color:#ff6a3d"')+'</span>'+open+u(open===1?'alert':'alerts')+'</b></div></div>'+
-   '<div class="p kpi" style="--acc:#3be3f7"><h4>Grid power vs renewables</h4><div class="kv"><b class="nv">'+Math.round(100-renW)+'%<span class="kl">from grid</span></b><b class="nv a">'+Math.round(renW)+'%<span class="kl">solar, piezo, battery</span></b></div></div>'+
-   '<div class="p kpi" style="--acc:#4f8cff"><h4>HVAC status</h4><ul>'+
+   '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saving</h4><div class="kv"><b class="nv">'+energyPct.toFixed(1)+'%</b><b class="nv a">'+fmt(S.dayBase-S.dayGrid)+'<span class="kl">kWh/day</span></b></div></div>'+
+   '<div class="p kpi" style="--acc:#8dff5c"><h4>Occupant comfort</h4><div class="kv"><b class="nv '+cc+'" style="font-size:38px">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:22px;color:#dbe8ff">/100</b></div><span class="kl">comfort gate active</span></div>'+
+   '<div class="p kpi" style="--acc:#ffb627"><h4>Peak demand</h4><div class="kv"><b class="nv a">'+peakPct.toFixed(0)+'%</b><b class="nv">'+Math.round(S.pkGrid)+'<span class="kl">kW after optimisation</span></b></div></div>'+
+   '<div class="p kpi" style="--acc:#a98bff"><h4>AI action now</h4><div class="kv"><b class="nv" style="font-size:21px;color:#c8b8ff">'+aiAction+'</b></div><span class="kl">'+Math.round(s.occ)+'% occupancy • '+Math.max.apply(null,s.zones.map(z=>z.co2))+' ppm max CO₂</span></div>'+
+   '<div class="p kpi" style="--acc:#4f8cff"><h4>System status</h4><ul>'+
      '<li><i class="dotc" style="background:'+(anom?'#ff4d5e':'#8dff5c')+';box-shadow:0 0 8px '+(anom?'#ff4d5e':'#8dff5c')+'"></i>'+(anom?'AHU-03 anomaly detected':'All units normal')+'</li>'+
      '<li><i class="dotc" style="background:'+(s.mode==='precool'?'#4f8cff':s.mode==='dr'?'#ffb627':'#8fa6c8')+';box-shadow:0 0 8px currentColor"></i>'+(s.mode==='precool'?'Pre-cooling active':s.mode==='dr'?'Demand response active':s.mode==='setback'?'Night setback':'Auto mode')+'</li></ul></div>';
 
