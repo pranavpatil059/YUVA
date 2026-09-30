@@ -203,6 +203,33 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 .rank-row{display:grid;grid-template-columns:72px 1fr auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid rgba(86,140,230,.15)}
 .rank-row:last-child{border-bottom:0}.rank-row b{font-family:var(--disp)}.rank-row .score{color:var(--amber);font:600 15px var(--disp)}
 .rank-bar{height:6px;border-radius:4px;background:rgba(120,160,230,.13);overflow:hidden}.rank-bar i{display:block;height:100%;background:linear-gradient(90deg,#4f8cff,#8dff5c)}
+/* reference dashboard template */
+.hero-intro{display:none!important}
+main{max-width:1600px;padding:14px 20px 48px}
+.kpis{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.kpi{min-height:138px;padding:14px 16px 12px;border-radius:9px;background:linear-gradient(180deg,rgba(22,40,76,.96),rgba(8,18,39,.97));}
+.kpi h4{font-size:16px;margin-bottom:9px;padding-bottom:8px}
+.kpi .kv{gap:10px}
+.kpi .nv{font-size:38px}
+.kpi .kl{font-size:12px}
+.hud{grid-template-columns:340px minmax(520px,1fr) 340px;gap:14px}
+.stage{min-height:620px}
+.twin{border-radius:10px;background:#071225;box-shadow:0 0 38px rgba(40,100,230,.22)}
+.twin-head,.hint{display:none}
+.zoom{right:12px;top:12px}
+.col{gap:14px}
+.col .p{padding:14px 16px}
+.p h3{font-size:16px;padding-bottom:9px;margin-bottom:8px}
+.r2{padding:5px 0}
+.r2 span{font-size:14px}
+.nv{font-size:27px}
+.charts2{gap:14px;margin-top:14px}
+.chartbox{height:265px}
+section{margin-top:34px}
+.sec-head{margin-bottom:12px}
+@media(max-width:1250px){.hud{grid-template-columns:290px minmax(420px,1fr) 290px}.kpis{gap:10px}.kpi .nv{font-size:32px}}
+@media(max-width:1000px){.hud{grid-template-columns:1fr}.stage{min-height:600px}.col{display:grid;grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){main{padding:10px}.kpis{grid-template-columns:1fr}.col{grid-template-columns:1fr}.stage{min-height:500px}}
 .hero-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:12px 0 12px;padding:14px 16px;border:1px solid rgba(86,140,230,.35);border-radius:9px;background:linear-gradient(100deg,rgba(20,40,78,.82),rgba(9,18,38,.68));box-shadow:0 0 24px rgba(30,90,220,.10)}
 .hero-kicker{font:600 11px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
 .hero-intro h1{font:700 25px var(--disp);margin:0;letter-spacing:.01em}
@@ -817,13 +844,13 @@ function updateUI(s){
   const peakPct=S.pkBase>0?100*(S.pkBase-S.pkGrid)/S.pkBase:0;
   const aiAction=s.mode==='precool'?'Pre-cooling selected':s.mode==='dr'?'Peak demand response':s.mode==='setback'?'Low-occupancy setback':'Occupancy-aware control';
   $('kpis').innerHTML=
-   '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saving</h4><div class="kv"><b class="nv">'+energyPct.toFixed(1)+'%</b><b class="nv a">'+fmt(S.dayBase-S.dayGrid)+'<span class="kl">kWh/day</span></b></div></div>'+
-   '<div class="p kpi" style="--acc:#8dff5c"><h4>Occupant comfort</h4><div class="kv"><b class="nv '+cc+'" style="font-size:38px">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:22px;color:#dbe8ff">/100</b></div><span class="kl">comfort gate active</span></div>'+
-   '<div class="p kpi" style="--acc:#ffb627"><h4>Peak demand</h4><div class="kv"><b class="nv a">'+peakPct.toFixed(0)+'%</b><b class="nv">'+Math.round(S.pkGrid)+'<span class="kl">kW after optimisation</span></b></div><span class="kl">'+Math.round(S.pkBase)+' → '+Math.round(S.pkGrid)+' kW max grid demand</span></div>'+
-   '<div class="p kpi" style="--acc:#a98bff"><h4>AI action now</h4><div class="kv"><b class="nv" style="font-size:21px;color:#c8b8ff">'+aiAction+'</b></div><span class="kl">'+Math.round(s.occ)+'% occupancy • '+Math.max.apply(null,s.zones.map(z=>z.co2))+' ppm max CO₂</span></div>'+
-   '<div class="p kpi" style="--acc:#4f8cff"><h4>System status</h4><ul>'+
+   '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saved today</h4><div class="kv"><b class="nv">'+fmt(S.dayBase-S.dayGrid)+'<span class="kl">kWh</span></b><b class="nv a" style="font-size:30px">'+inr(savedRs)+'</b></div></div>'+
+   '<div class="p kpi" style="--acc:#8dff5c"><h4>Comfort score</h4><div class="kv"><b class="nv '+cc+'">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:23px;color:#dbe8ff">/100</b></div></div>'+
+   '<div class="p kpi" style="--acc:#ff6a3d"><h4>System alerts</h4><div class="kv"><b class="nv o" style="font-size:38px">'+open+'</b><span class="nv w" style="font-size:22px;color:#9eb5d8">alerts</span></div></div>'+
+   '<div class="p kpi" style="--acc:#3be3f7"><h4>Grid power vs renewables</h4><div class="kv"><b class="nv">'+(100-renW).toFixed(0)+'<span class="kl">%</span></b><b class="nv a">'+renW.toFixed(0)+'<span class="kl">%</span></b></div><span class="kl">from grid &nbsp;&nbsp; solar + battery</span></div>'+
+   '<div class="p kpi" style="--acc:#4f8cff"><h4>HVAC status</h4><ul>'+
      '<li><i class="dotc" style="background:'+(anom?'#ff4d5e':'#8dff5c')+';box-shadow:0 0 8px '+(anom?'#ff4d5e':'#8dff5c')+'"></i>'+(anom?'AHU-03 anomaly detected':'All units normal')+'</li>'+
-     '<li><i class="dotc" style="background:'+(s.mode==='precool'?'#4f8cff':s.mode==='dr'?'#ffb627':'#8fa6c8')+';box-shadow:0 0 8px currentColor"></i>'+(s.mode==='precool'?'Pre-cooling active':s.mode==='dr'?'Demand response active':s.mode==='setback'?'Night setback':'Auto mode')+'</li></ul></div>';
+     '<li><i class="dotc" style="background:'+(s.mode==='precool'?'#4f8cff':'#8fa6c8')+';box-shadow:0 0 8px currentColor"></i>'+(s.mode==='precool'?'Pre-cooling active':'Auto mode active')+'</li></ul></div>';
 
   const iaqMax=Math.max.apply(null,s.zones.map(z=>z.co2));
   const iaq=iaqMax<800?['Good','g']:iaqMax<1000?['Fair','a']:['Poor','r'];
