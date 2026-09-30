@@ -915,9 +915,9 @@ function init3D(){
   box.insertBefore(renderer.domElement,box.firstChild);
   const scene=new THREE.Scene();
   scene.fog=new THREE.Fog(0x0b1a3a,30,64);
-  const camera=new THREE.PerspectiveCamera(30,1,.1,220);
-  const target=new THREE.Vector3(.6,2.1,.8);
-  let theta=.74,phi=1.0,radius=25,idle=0,sway=0;
+  const camera=new THREE.PerspectiveCamera(34,1,.1,220);
+  const target=new THREE.Vector3(.15,2.35,.55);
+  let theta=.74,phi=1.0,radius=18.5,idle=0,sway=0;
   function place(){
     camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta+sway),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta+sway));
     camera.lookAt(target);
@@ -953,12 +953,12 @@ function init3D(){
   const concrete=MT(0xb4bdc8,{roughness:.6});
   const wall=MT(0xd3d9e0,{roughness:.7});
   const frame=MT(0x27384f,{roughness:.4,metalness:.4});
-  const glassSide=new THREE.MeshStandardMaterial({color:0x6ec6ff,transparent:true,opacity:.30,roughness:.1,metalness:.5,depthWrite:false});
-  const glassFront=new THREE.MeshStandardMaterial({color:0xa6e0ff,transparent:true,opacity:.09,roughness:.05,metalness:.4,depthWrite:false});
+  const glassSide=new THREE.MeshStandardMaterial({color:0x6ec6ff,transparent:true,opacity:.22,roughness:.08,metalness:.55,depthWrite:false});
+  const glassFront=new THREE.MeshStandardMaterial({color:0xa6e0ff,transparent:true,opacity:.035,roughness:.04,metalness:.45,depthWrite:false});
   const wood=MT(0x8f5d36,{roughness:.6});
   const deskDark=MT(0x3a2a20);
   const chairM=MT(0x22303f);
-  const FH=.92,SL=.1,W=6.4,D=5;
+  const FH=1.02,SL=.1,W=7.2,D=5.6;
   const floors=[],lightMats=[],screenMats=[],peopleG=[],diffs=[];
   const PPL=[0xff8a3d,0x3be3f7,0xf2f2f2,0x8dff5c,0xff5e8a,0xa98bff];
   for(let i=0;i<5;i++){
@@ -1000,6 +1000,42 @@ function init3D(){
     }
     diffs.push(dg);
   }
+  /* premium architectural cutaway facade */
+  const balconyM=MT(0xb9c4cf,{roughness:.45,metalness:.35});
+  const railM=new THREE.MeshStandardMaterial({color:0x8fa7b9,transparent:true,opacity:.72,roughness:.25,metalness:.65});
+  const warmGlass=new THREE.MeshStandardMaterial({color:0xffc46b,emissive:0xff9b38,emissiveIntensity:.18,transparent:true,opacity:.16,roughness:.08,metalness:.2});
+  for(let bi=0;bi<4;bi++){
+    const by=SL+(bi+.05)*(FH+SL);
+    const slab=put(bx(W-.25,.08,.72,balconyM),.25,by+.05,D/2+.28);
+    put(bx(W-.38,.045,.045,railM),.25,by+.62,D/2+.62);
+    put(bx(.045,.62,.045,railM),-W/2+.15,by+.34,D/2+.62);
+    put(bx(.045,.62,.045,railM),W/2-.15,by+.34,D/2+.62);
+    for(let rk=0;rk<8;rk++)put(bx(.025,.55,.025,railM),-W/2+.45+rk*(W-0.9)/7,by+.32,D/2+.62);
+    put(bx(W-.55,.72,.035,warmGlass),.25,by+.39,D/2+.035);
+  }
+  const facadeFrame=MT(0x2b4053,{roughness:.32,metalness:.5});
+  for(let k=0;k<6;k++)put(bx(.09,5*(FH+SL)-.2,.12,facadeFrame),-W/2+.45+k*(W-.9)/5,2.7,D/2+.12);
+  for(let bi=0;bi<5;bi++){
+    const fy=SL+bi*(FH+SL)+.07;
+    put(bx(W-.5,.055,.08,facadeFrame),0,fy,D/2+.16);
+  }
+  /* roof service zone: battery + HVAC cabinets */
+  const roofMetal=MT(0x687b8c,{roughness:.4,metalness:.55});
+  const batteryBody=put(bx(1.55,.72,1.05,MT(0x315f52,{roughness:.42,metalness:.35})),-1.45,yT+.42,1.55);
+  put(bx(1.28,.42,.035,MT(0x182c35,{roughness:.28,metalness:.6})),-1.45,yT+.45,2.08);
+  for(let q=0;q<4;q++)put(bx(.18,.38,.04,new THREE.MeshBasicMaterial({color:q%2?0x42d9ff:0x8fffc5})),-1.9+q*.3,yT+.46,2.11);
+  put(bx(1.75,.62,.9,roofMetal),1.35,yT+.34,-1.25);
+  for(let q=0;q<2;q++){
+    const fanTop=put(new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.045,24),new THREE.MeshBasicMaterial({color:0x9caebc})),1.0+q*.7,yT+.67,-1.25);
+    const hub=put(new THREE.Mesh(new THREE.SphereGeometry(.06,10,10),new THREE.MeshBasicMaterial({color:0x35d8ff})),1.0+q*.7,yT+.7,-1.25);
+  }
+  /* rooftop greenery + planters */
+  const plantM=MT(0x2f9a48,{roughness:.9});
+  for(let q=0;q<5;q++){
+    put(bx(.55,.18,.42,MT(0x596b5c,{roughness:.8})),2.0+q*.62,yT+.18,1.75);
+    put(new THREE.Mesh(new THREE.IcosahedronGeometry(.28,0),plantM),2.0+q*.62,yT+.43,1.75);
+  }
+
   const yT=5*(FH+SL)+SL;
   put(bx(W+.3,SL,D+.3,concrete),0,5*(FH+SL)+SL/2,0);
   const par=MT(0xaab4c1);
