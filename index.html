@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>VoltSense BEMS: Smart Building Energy & Occupant Experience</title>
+<title>VoltSense BEMS: Smart Building Digital Twin</title>
 <link rel="canonical" href="https://voltsense-bems.onrender.com/">
 <meta property="og:url" content="https://voltsense-bems.onrender.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,7 +125,7 @@ section{margin-top:44px}
 
 /* detail sections */
 .grid2e{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}\n.building-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}\n.building-grid .model{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(86,140,230,.18);white-space:nowrap}
@@ -167,6 +167,31 @@ td.r,th.r{text-align:right}
 .note{font-size:12.5px;color:var(--mute);margin-top:10px}
 footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
 
+@media (max-width:1180px){
+  .hud{grid-template-columns:1fr 1fr}
+  .stage{grid-column:1/-1;order:-1;min-height:560px}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .grid2,.grid2e,.grid3,.charts2{grid-template-columns:1fr}
+  .zones{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr}
+  .arch{grid-template-columns:1fr}
+  .arch div+div{border-left:1px solid var(--line);border-top:0}
+  .arch div:first-child{border-radius:8px 8px 0 0}.arch div:last-child{border-radius:0 0 8px 8px}
+  .rail-in{grid-template-columns:1fr;gap:8px}
+  .brand small{display:none}
+}
+@media (max-width:640px){
+  .hud{grid-template-columns:1fr}
+  .stage{min-height:430px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi .nv{font-size:26px}
+  .sl{grid-template-columns:1fr 60px} .sl label{grid-column:1/-1}
+  .zones{grid-template-columns:1fr}
+  main{padding:12px 12px 50px}
+  .rail-in{padding:8px 12px}
+  .tag{font-size:11px;padding:3px 8px 4px}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
 /* smart-building challenge outcome */
 .smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .smart-card{padding:14px;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,rgba(21,38,72,.92),rgba(9,18,38,.95))}
@@ -203,51 +228,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 .rank-row{display:grid;grid-template-columns:72px 1fr auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid rgba(86,140,230,.15)}
 .rank-row:last-child{border-bottom:0}.rank-row b{font-family:var(--disp)}.rank-row .score{color:var(--amber);font:600 15px var(--disp)}
 .rank-bar{height:6px;border-radius:4px;background:rgba(120,160,230,.13);overflow:hidden}.rank-bar i{display:block;height:100%;background:linear-gradient(90deg,#4f8cff,#8dff5c)}
-/* reference dashboard template */
-.hero-intro{display:none!important}
-main{max-width:1600px;margin:0 auto;padding:14px 20px 48px}
-#hud{display:block}
-.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:14px}
-.kpi{min-height:138px;padding:14px 16px 12px;border-radius:9px;background:linear-gradient(180deg,rgba(22,40,76,.96),rgba(8,18,39,.97))}
-.kpi h4{font-size:16px;margin-bottom:9px;padding-bottom:8px}
-.kpi .kv{gap:10px}
-.kpi .nv{font-size:38px}
-.kpi .kl{font-size:12px}
-.hud{display:grid;grid-template-columns:340px minmax(520px,1fr) 340px;gap:14px;align-items:stretch}
-.stage{min-height:620px;height:620px}
-.twin{height:100%;min-height:620px;border-radius:10px;background:#071225;box-shadow:0 0 38px rgba(40,100,230,.22)}
-.twin-head{display:none}
-.hint{display:block}
-.zoom{right:12px;top:12px}
-.col{gap:14px}
-.col .p{padding:14px 16px}
-.p h3{font-size:16px;padding-bottom:9px;margin-bottom:8px}
-.r2{padding:5px 0}
-.r2 span{font-size:14px}
-.nv{font-size:27px}
-.charts2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-.chartbox{height:265px}
-section{margin-top:34px}
-.sec-head{margin-bottom:12px}
-@media(max-width:1250px){.hud{grid-template-columns:290px minmax(420px,1fr) 290px}.kpis{gap:10px}.kpi .nv{font-size:32px}}
-@media(max-width:1000px){.hud{grid-template-columns:1fr}.stage,.twin{min-height:600px;height:600px}.col{display:grid;grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){main{padding:10px}.kpis{grid-template-columns:1fr}.col{grid-template-columns:1fr}.stage,.twin{min-height:500px;height:500px}.charts2{grid-template-columns:1fr}}
-.hero-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:12px 0 12px;padding:14px 16px;border:1px solid rgba(86,140,230,.35);border-radius:9px;background:linear-gradient(100deg,rgba(20,40,78,.82),rgba(9,18,38,.68));box-shadow:0 0 24px rgba(30,90,220,.10)}
-.hero-kicker{font:600 11px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
-.hero-intro h1{font:700 25px var(--disp);margin:0;letter-spacing:.01em}
-.hero-intro p{margin:4px 0 0;color:var(--mute);font-size:12.5px}
-.hero-status{display:flex;align-items:center;gap:9px;white-space:nowrap;padding:8px 11px;border:1px solid rgba(59,227,247,.3);border-radius:999px;background:rgba(59,227,247,.055);font-size:12px}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
-@media(max-width:700px){.stage{min-height:500px}.fb-building{width:72%;height:50%;top:27%}.fb-label{font-size:9px}.fb-label b{font-size:10px}.fb-grid{right:3%}.fb-solar{left:3%}.fb-hvac{right:3%}}
 
-.twin-head{position:absolute;left:12px;top:12px;z-index:3;pointer-events:none;padding:8px 11px;border-radius:7px;background:rgba(6,13,30,.76);border:1px solid rgba(86,140,230,.35);backdrop-filter:blur(6px)}
-.twin-head b{display:block;font:600 13px var(--disp)}
-.twin-head span{display:block;color:var(--mute);font-size:10.5px;margin-top:1px}
-.kpi{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
-.kpi:hover{transform:translateY(-2px);border-color:rgba(59,227,247,.55);box-shadow:inset 0 0 28px rgba(50,110,220,.10),0 0 28px rgba(30,110,240,.16)}
-.kpi .kl{line-height:1.25}
-@media(max-width:1000px){.smart-grid{grid-template-columns:repeat(2,1fr)}.smart-flow{grid-template-columns:repeat(2,1fr)}.smart-flow div+div{border-left:1px solid var(--line)}.smart-flow div:last-child{border-radius:0 0 8px 8px}}
-@media(max-width:640px){.smart-grid{grid-template-columns:1fr}.smart-flow{grid-template-columns:1fr}.smart-flow div+div{border-left:1px solid var(--line);border-top:0}.smart-flow div:first-child{border-radius:8px 8px 0 0}.smart-flow div:last-child{border-radius:0 0 8px 8px}.hero-intro{align-items:flex-start;flex-direction:column;gap:9px}.hero-intro h1{font-size:21px}.hero-status{align-self:stretch;justify-content:center}}
 /* electrical health dashboard */
 .elec-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
 .elec-meters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -271,39 +252,13 @@ section{margin-top:34px}
 @media(max-width:640px){.smart-grid{grid-template-columns:1fr}.smart-flow{grid-template-columns:1fr}.smart-flow div+div{border-left:1px solid var(--line);border-top:0}.smart-flow div:first-child{border-radius:8px 8px 0 0}.smart-flow div:last-child{border-radius:0 0 8px 8px}}
 
 
-@media (max-width:1180px){
-  .smart-extras{grid-template-columns:repeat(2,1fr)}
-  .hud{grid-template-columns:1fr 1fr}
-  .stage{grid-column:1/-1;order:-1;min-height:560px}
-  .kpis{grid-template-columns:repeat(3,1fr)}
-  .grid2,.grid2e,.grid3,.building-grid,.charts2{grid-template-columns:1fr 1fr}
-  .zones{grid-template-columns:repeat(2,1fr)}
-  .steps{grid-template-columns:1fr}
-  .arch{grid-template-columns:1fr}
-  .arch div+div{border-left:1px solid var(--line);border-top:0}
-  .arch div:first-child{border-radius:8px 8px 0 0}.arch div:last-child{border-radius:0 0 8px 8px}
-  .rail-in{grid-template-columns:1fr;gap:8px}
-  .brand small{display:none}
-}
-@media (max-width:640px){
-  .smart-extras{grid-template-columns:1fr}
-  .hud{grid-template-columns:1fr}
-  .stage{min-height:430px}
-  .kpis{grid-template-columns:repeat(2,1fr)}\n  .building-grid{grid-template-columns:1fr}
-  .kpi .nv{font-size:26px}
-  .sl{grid-template-columns:1fr 60px} .sl label{grid-column:1/-1}
-  .zones{grid-template-columns:1fr}
-  main{padding:12px 12px 50px}
-  .rail-in{padding:8px 12px}
-  .tag{font-size:11px;padding:3px 8px 4px}
-}
-@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+
 </style>
 </head>
 <body>
 <header class="rail">
   <div class="rail-in">
-    <div class="brand"><div class="logo">V</div><div><b>VoltSense BEMS</b><small>Smart building energy, comfort & digital twin</small></div></div>
+    <div class="brand"><div class="logo">V</div><div><b>VoltSense BEMS</b><small>Tower A digital twin, simulation mode</small></div></div>
     <div class="scrub">
       <div class="scrub-top"><span>Simulated day: drag to travel through time</span><span class="clk num" id="clk">00:00</span></div>
       <div class="track" id="track">
@@ -315,24 +270,19 @@ section{margin-top:34px}
     </div>
     <div class="ctrl">
       <button class="btn on" id="play" aria-label="Play or pause">Pause</button>
-      <select class="btn" id="speed" aria-label="Simulation speed"><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="2">2x</option><option value="4">4x</option></select>
+      <select class="btn" id="speed" aria-label="Simulation speed"><option value="1">1x</option><option value="3" selected>3x</option><option value="10">10x</option></select>
     </div>
   </div>
-  <nav class="subnav"><a href="#hud">Command center</a><a href="#smart">Smart building outcomes</a><a href="#grid">Peak shifting & grid response</a><a href="#hvac">HVAC & comfort</a><a href="#electrical">Electrical health</a><a href="#ml">AI models</a><a href="#finance">Savings & economics</a></nav>
+  <nav class="subnav"><a href="#hud">Command center</a><a href="#grid">Peak shifting and TOD</a><a href="#hvac">HVAC and comfort</a><a href="#ml">ML models</a><a href="#finance">Savings and carbon</a></nav>
 </header>
 
 <main>
-<div class="hero-intro">
-  <div><div class="hero-kicker">AI building control centre · simulated live view</div><h1>Sense. Predict. Optimise. Verify.</h1><p>Energy efficiency, peak-demand response and occupant comfort in one building operating layer.</p></div>
-  <div class="hero-status"><i class="live-dot"></i><span>Digital twin online · AI control active</span></div>
-</div>
 <div id="hud">
   <div class="kpis" id="kpis"></div>
   <div class="hud">
     <div class="col" id="colL"></div>
     <div class="stage">
       <div class="twin" id="twinbox">
-        <div class="twin-head"><b>Live building digital twin</b><span>Click a floor to inspect zone state · AI actions highlighted</span></div>
         <div class="vig"></div>
         <div class="zoom"><button class="btn" id="zin" aria-label="Zoom in">+</button><button class="btn" id="zout" aria-label="Zoom out">−</button></div>
         <div class="zinfo" id="zinfo"></div>
@@ -343,7 +293,7 @@ section{margin-top:34px}
   </div>
   <div class="charts2">
     <div class="p" style="--acc:#4f8cff"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg>Load shifting</h3><div class="chartbox"><canvas id="cLoad"></canvas></div></div>
-    <div class="p" style="--acc:#ffb627"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>AI load forecast</h3><div class="chartbox"><canvas id="cFc"></canvas></div></div>
+    <div class="p" style="--acc:#ffb627"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Energy forecast</h3><div class="chartbox"><canvas id="cFc"></canvas></div></div>
   </div>
 </div>
 
@@ -355,6 +305,7 @@ section{margin-top:34px}
     <div class="smart-proof-item"><b>Peak grid demand</b><strong>124 → 26 kW</strong><span>Modeled maximum during peak windows · before → after</span></div>
     <div class="smart-proof-item"><b>Tenant engagement</b><strong>Floor leaderboard</strong><span>Top 3 simulated floor challenge scores appear in the interactive section below</span></div>
   </div>
+<div id="smartDash"></div>
 <div id="smartExtras"></div>
 </section>
 <section id="grid">
@@ -380,7 +331,7 @@ section{margin-top:34px}
   <div id="elecDash"></div>
 </section>
 <section id="ml">
-  <div class="sec-head"><h2>AI optimisation & prediction layer</h2><p>Three controller models are demonstrated in simulation, with a separate real-data validation model trained on a public BDG2 sample to show measured forecasting performance.</p></div>
+  <div class="sec-head"><h2>Machine learning layer</h2><p>Three models feed the controller. Charts are simulated model output, with a separate public BDG2 real-data validation used to demonstrate the forecasting pipeline.</p></div>
   <div class="rec" id="rec"></div>
   <div class="grid2e" style="margin-top:14px">
     <div class="card"><h3>Occupancy forecast</h3><div class="chartbox sm"><canvas id="cOc"></canvas></div></div>
@@ -391,19 +342,10 @@ section{margin-top:34px}
     <div class="model"><b>Occupancy predictor (gradient boosting)</b><p>Learns badge, Wi-Fi and CO₂ patterns per zone to schedule HVAC and lights ahead of people.</p><div class="m" id="mm2"></div></div>
     <div class="model"><b>Fault detector (isolation forest)</b><p>Scores each machine against its own healthy behaviour and names the likely cause.</p><div class="m" id="mm3"></div></div>
   </div>
-  <div class="model" style="margin-top:14px;border-color:rgba(59,227,247,.35)">
-    <b>Real-data validation · BDG2 hourly sample</b>
-    <p>Small ridge forecaster trained on the public Building Data Genome 2 sample: 6,553 hourly rows from two buildings, using lag-24 demand plus calendar features. 80/20 chronological holdout.</p>
-    <div class="extra-pair" style="margin-top:10px">
-      <div><span>Model MAPE</span><b class="num" style="color:var(--green)">5.5%</b></div>
-      <div><span>Lag-24 baseline</span><b class="num">5.31%</b></div>
-    </div>
-    <div class="extra-note">Test MAE: model 11.5 vs lag-24 baseline 11.93. The baseline is the same-hour-previous-day persistence forecast on the same chronological holdout; this validation demonstrates a real-data pipeline, not superiority over every baseline. Dataset covers two sampled buildings, so results should not be generalized to all building types. <a href="https://github.com/skforecast/skforecast-datasets" target="_blank" rel="noreferrer" style="color:var(--teal)">Dataset source ↗</a></div>
-  </div>
 </section>
 
 <section id="finance">
-  <div class="sec-head"><h2>Energy savings, retrofit economics & carbon</h2><p>Change the design and see the business case move. Costs are typical Indian commercial rates, editable in the code.</p></div>
+  <div class="sec-head"><h2>Savings, payback and carbon</h2><p>Change the design and see the business case move. Costs are typical Indian commercial rates, editable in the code.</p></div>
   <div class="grid2e">
     <div class="card">
       <h3>What-if design</h3>
@@ -412,7 +354,7 @@ section{margin-top:34px}
       <div class="sl"><label for="sCur">HVAC cut in peak hours</label><input type="range" id="sCur" min="0" max="50" step="5"><span class="num" id="vCur"></span></div>
       <div class="sl"><label for="sSet">Setpoint raise</label><input type="range" id="sSet" min="0" max="3" step="0.5"><span class="num" id="vSet"></span></div>
       <button class="btn" id="reset">Reset to proposed design</button>
-      <p class="note">The comfort gate prevents peak-hour HVAC reduction when modeled occupant comfort would fall below the operating threshold.</p>
+      <p class="note">Each 1°C setpoint raise cuts HVAC energy by about 6%. Cutting HVAC in peak hours is only comfortable because the building was pre-cooled first.</p>
     </div>
     <div class="card" id="fin"></div>
   </div>
@@ -423,33 +365,12 @@ section{margin-top:34px}
       <div><b>Sensors and meters</b><span>Occupancy, CO₂, lux, temperature, sub-meters, inverter</span></div>
       <div><b>Edge gateway</b><span>BACnet, Modbus to MQTT. Real-time control stays on site</span></div>
       <div><b>Cloud data layer</b><span>Time-series store with tariff and weather feeds</span></div>
-      <div><b>AI services</b><span>Load forecast, occupancy, anomaly detection and pre-cool optimisation</span></div>
-      <div><b>BMS / DISCOM integration</b><span>Operators, occupant feedback and grid demand-response signals via open APIs</span></div>
+      <div><b>ML services</b><span>Forecast, occupancy, fault detection, pre-cool optimiser</span></div>
+      <div><b>This dashboard</b><span>Operators, occupants and grid demand-response signals</span></div>
     </div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="sec-head" style="margin-bottom:12px"><h3>Retrofit & India-scale deployment</h3><p>One sensing and analytics layer, adapted to building type, climate and existing BMS infrastructure.</p></div>
-    <div class="building-grid">
-      <div class="model"><b>Commercial / IT</b><p>HVAC + lighting + peak-demand optimisation.</p><div class="m">Office / tower</div></div>
-      <div class="model"><b>Hotel</b><p>Room occupancy + thermal-zone control.</p><div class="m">Guest comfort</div></div>
-      <div class="model"><b>Hostel / Campus</b><p>Schedule-aware rooms + common-area loads.</p><div class="m">Replicable</div></div>
-      <div class="model"><b>Residential</b><p>Occupancy + common services + demand response.</p><div class="m">Scalable template</div></div>
-    </div>
-    <div class="smart-flow" style="margin-top:12px">
-      <div><b>Measure</b><span>Smart meters + low-cost indoor sensors</span></div>
-      <div><b>Connect</b><span>BACnet / Modbus / MQTT + existing BMS</span></div>
-      <div><b>Optimise</b><span>HVAC, lighting, pre-cooling + demand response</span></div>
-      <div><b>Verify</b><span>kWh, peak kW, comfort + indoor-air indicators</span></div>
-    </div>
-    <div class="grid3" style="margin-top:12px">
-      <div class="model"><b>Hot-dry</b><p>Pre-cooling, peak shifting, solar and HVAC optimisation.</p><div class="m">Climate-adaptive controls</div></div>
-      <div class="model"><b>Warm-humid</b><p>Temperature, CO₂ and humidity-aware ventilation/HVAC where available.</p><div class="m">Climate-adaptive controls</div></div>
-      <div class="model"><b>Composite / temperate / cold</b><p>Seasonal rules for cooling, heating, ventilation and setback.</p><div class="m">Same platform, local rules</div></div>
-    </div>
-    <p class="note" style="margin:12px 0 0"><b>Retrofit economics:</b> interactive capex/payback values are indicative demonstration assumptions, not quotations.</p>
   </div>
 </section>
-<footer>All figures are simulated for a demonstration building unless explicitly marked as real-data validation. ECBC reference view uses a 150 kWh/m²/yr office benchmarking reference; formal ECBC whole-building compliance uses a project-specific Standard Building EPI. Real-data validation uses the public BDG2 hourly sample. Emission factor 0.82 kg CO₂ per kWh is a demonstration assumption. Validate all site-specific energy, comfort, cost and equipment values with measured building data before deployment.</footer>
+<footer>All figures are simulated for a demonstration building. Emission factor 0.82 kg CO₂ per kWh (Indian grid average, assumption). Piezoelectric output is a small assumed value and is shown mainly as a demonstrator.</footer>
 </main>
 
 <script>
@@ -493,7 +414,7 @@ function model(P){
     M.curt[h]=0; M.pre[h]=0;
     const irr=Math.pow(Math.max(0,Math.sin(Math.PI*(h-6)/12)),1.25)*(0.92+0.08*Math.sin(h*1.7));
     M.sol[h]=P.solarKw*irr*0.82;
-    M.pz[h]=0; // experimental piezo concept is not counted in core BEMS KPIs
+    M.pz[h]=1.8*o;
   }
   const win=[{pk:[9,10,11],pre:[6,7,8],w:[.25,.35,.4]},{pk:[18,19,20,21],pre:[15,16,17],w:[.3,.35,.35]}];
   win.forEach(x=>{
@@ -507,7 +428,7 @@ function model(P){
   let soc=cap*.25;
   for(let d=0;d<2;d++)for(let h=0;h<24;h++){
     let p=0;const c=cls(h);
-    const net=Math.max(0,M.load[h]-M.sol[h]);
+    const net=Math.max(0,M.load[h]-M.sol[h]-M.pz[h]);
     if(c==='peak'){p=Math.max(0,Math.min(maxP,soc-minS,net))}
     else if(c==='off'){p=-Math.min(maxP,(maxS-soc)/0.95)}
     else if(h>=12&&h<15){p=-Math.min(maxP*0.6,(maxS-soc)/0.95)}
@@ -516,7 +437,7 @@ function model(P){
     if(d===1){M.bat[h]=p;M.soc[h]=soc}
   }
   for(let h=0;h<24;h++){
-    const n=M.load[h]-M.sol[h]-M.bat[h];
+    const n=M.load[h]-M.sol[h]-M.pz[h]-M.bat[h];
     M.grid[h]=Math.max(0,n);M.exp[h]=Math.max(0,-n);
   }
   const S={};
@@ -529,12 +450,12 @@ function model(P){
   S.byBase={off:0,normal:0,peak:0};S.byGrid={off:0,normal:0,peak:0};S.costBase={off:0,normal:0,peak:0};S.costGrid={off:0,normal:0,peak:0};
   for(let h=0;h<24;h++){const c=cls(h);S.byBase[c]+=M.base[h];S.byGrid[c]+=M.grid[h];S.costBase[c]+=M.base[h]*RATE[c];S.costGrid[c]+=M.grid[h]*RATE[c]}
   S.sol=sum(M.sol);S.pz=sum(M.pz);S.dis=sum(M.bat.map(v=>Math.max(0,v)));
-  S.ren=sum(M.load.map((v,h)=>Math.min(v,M.sol[h]+Math.max(0,M.bat[h]))));
+  S.ren=sum(M.load.map((v,h)=>Math.min(v,M.sol[h]+M.pz[h]+Math.max(0,M.bat[h]))));
   S.shifted=Math.max(sum(M.curt),0);
   S.peakDropPct=100*(1-S.pkGrid/S.pkBase);
   S.saveDay=S.cBase-S.cGrid;S.saveYear=S.saveDay*DAYS;
-  S.capex={solar:P.solarKw*42000,bat:P.batKwh*16000,ctrl:2000000};
-  S.capexTot=S.capex.solar+S.capex.bat+S.capex.ctrl;
+  S.capex={solar:P.solarKw*42000,bat:P.batKwh*16000,ctrl:2000000,piezo:350000};
+  S.capexTot=S.capex.solar+S.capex.bat+S.capex.ctrl+S.capex.piezo;
   S.payback=S.saveYear>0?S.capexTot/S.saveYear:Infinity;
   S.co2Base=S.dayBase*CO2F;S.co2Opt=S.dayGrid*CO2F;S.co2Year=(S.co2Base-S.co2Opt)*DAYS/1000;
   S.intensity=S.dayGrid*365/5200;S.intensityBase=S.dayBase*365/5200;
@@ -547,17 +468,16 @@ const R=rng(42);
 const noise=()=>(R()-.5)*2;
 const FC=OCC.map(()=>({a:noise(),b:noise(),o:noise()}));
 function mlSeries(){
-  const fc=[],baseFc=[],act=[],lo=[],hi=[],ofc=[],oact=[];
+  const fc=[],act=[],lo=[],hi=[],ofc=[],oact=[];
   for(let h=0;h<24;h++){
     const f=M.load[h]*(1+0.02*FC[h].a);
-    const b=M.base[h]*(1+0.02*FC[h].a);
     const a=M.load[h]*(1+0.045*FC[h].b);
-    fc.push(f);baseFc.push(b);act.push(a);lo.push(f*0.93);hi.push(f*1.07);
+    fc.push(f);act.push(a);lo.push(f*0.93);hi.push(f*1.07);
     ofc.push(clamp(OCC[h]*(1+0.06*FC[h].o),0,100));oact.push(clamp(OCC[h]*(1+0.10*FC[h].b),0,100));
   }
   const mape=100*sum(act.map((a,h)=>Math.abs(a-fc[h])/a))/24;
   const omae=sum(oact.map((a,h)=>Math.abs(a-ofc[h])))/24;
-  return {fc,baseFc,act,lo,hi,ofc,oact,mape,omae};
+  return {fc,act,lo,hi,ofc,oact,mape,omae};
 }
 let ML=mlSeries();
 
@@ -677,6 +597,7 @@ function buildCharts(){
   charts.mix=new Chart($('cMix'),{type:'line',data:{datasets:[
     ds('Grid',M.grid,mute,{fill:true,backgroundColor:mute+'55',tension:.25}),
     ds('Solar',M.sol,amber,{fill:true,backgroundColor:amber+'99',tension:.25}),
+    ds('Piezo',M.pz,violet,{fill:true,backgroundColor:violet+'99',tension:.25}),
     ds('Battery discharge',M.bat.map(v=>Math.max(0,v)),green,{fill:true,backgroundColor:green+'88',tension:.25})
   ]},options:baseOpts('kW',true),plugins:[bandsPlugin,markerPlugin]});
   const bo=baseOpts('kWh');bo.scales.x={type:'category',ticks:{color:TICK},grid:{display:false}};bo.plugins.tooltip={};
@@ -687,10 +608,9 @@ function buildCharts(){
   const fo=baseOpts('kW',false,true);
   fo.plugins.legend={position:'bottom',labels:{color:TICK,boxWidth:12,filter:i=>i.text!=='Upper band'&&i.text!=='Lower band'}};
   charts.fc=new Chart($('cFc'),{type:'line',data:{datasets:[
-    ds('Optimised range',ML.hi,amber+'00',{fill:'+1',backgroundColor:amber+'2a',borderWidth:0}),
-    ds('Optimised range',ML.lo,amber+'00',{borderWidth:0}),
-    ds('Baseline forecast',ML.baseFc,orange,{borderDash:[6,4],borderWidth:2,fill:false}),
-    ds('AI optimised forecast',ML.fc,amber,{borderWidth:3,fill:false}),
+    ds('Upper band',ML.hi,amber+'00',{fill:'+1',backgroundColor:amber+'2a',borderWidth:0}),
+    ds('Lower band',ML.lo,amber+'00',{borderWidth:0}),
+    ds('ML forecast',ML.fc,amber,{borderWidth:2.5,fill:false}),
     ds('Actual so far',ML.act.map((v,h)=>h<=Math.floor(curT)?v:null),teal,{borderWidth:2.5,fill:true,backgroundColor:gf(teal,'55','05')})
   ]},options:fo,plugins:[bandsPlugin,markerPlugin]});
   const oo=baseOpts('% of capacity');oo.scales.y.max=100;
@@ -702,10 +622,10 @@ function buildCharts(){
 function refreshCharts(){
   const c=charts;
   c.load.data.datasets[0].data=series(M.base);c.load.data.datasets[1].data=series(M.load);c.load.data.datasets[2].data=series(M.grid);
-  c.mix.data.datasets[0].data=series(M.grid);c.mix.data.datasets[1].data=series(M.sol);c.mix.data.datasets[2].data=series(M.bat.map(v=>Math.max(0,v)));
+  c.mix.data.datasets[0].data=series(M.grid);c.mix.data.datasets[1].data=series(M.sol);c.mix.data.datasets[2].data=series(M.pz);c.mix.data.datasets[3].data=series(M.bat.map(v=>Math.max(0,v)));
   c.tod.data.datasets[0].data=['off','normal','peak'].map(k=>S.byBase[k]);c.tod.data.datasets[1].data=['off','normal','peak'].map(k=>S.byGrid[k]);
-  c.fc.data.datasets[0].data=series(ML.hi);c.fc.data.datasets[1].data=series(ML.lo);c.fc.data.datasets[2].data=series(ML.baseFc);
-  c.fc.data.datasets[3].data=series(ML.fc);c.fc.data.datasets[4].data=series(ML.act.map((v,h)=>h<=Math.floor(curT)?v:null));
+  c.fc.data.datasets[0].data=series(ML.hi);c.fc.data.datasets[1].data=series(ML.lo);c.fc.data.datasets[2].data=series(ML.fc);
+  c.fc.data.datasets[3].data=series(ML.act.map((v,h)=>h<=Math.floor(curT)?v:null));
   c.oc.data.datasets[0].data=series(ML.ofc);c.oc.data.datasets[1].data=series(ML.oact.map((v,h)=>h<=Math.floor(curT)?v:null));
   Object.keys(c).forEach(k=>c[k].update('none'));
 }
@@ -729,7 +649,7 @@ function updateStatic(){
   const rows=k=>'<tr><td>'+CLSLABEL[k]+' at ₹'+RATE[k]+'</td><td class="r num">'+fmt(S.byBase[k])+'</td><td class="r num">'+fmt(S.byGrid[k])+'</td><td class="r num">'+inr(S.costBase[k])+'</td><td class="r num">'+inr(S.costGrid[k])+'</td></tr>';
   $('todTable').innerHTML='<tr><th>Band</th><th class="r">Base kWh</th><th class="r">Opt kWh</th><th class="r">Base ₹</th><th class="r">Opt ₹</th></tr>'+rows('off')+rows('normal')+rows('peak')+
     '<tr><td><b>Day total</b></td><td class="r num">'+fmt(S.dayBase)+'</td><td class="r num">'+fmt(S.dayGrid)+'</td><td class="r num">'+inr(S.cBase)+'</td><td class="r num"><b>'+inr(S.cGrid)+'</b></td></tr>';
-  $('mixNote').innerHTML='Solar supplies <b class="num">'+fmt(S.sol)+' kWh</b> a day, while the battery shifts <b class="num">'+fmt(S.dis)+' kWh</b> out of peak hours. Together they cover <b class="num">'+Math.round(100*S.ren/S.dayLoad)+'%</b> of modeled building demand.';
+  $('mixNote').innerHTML='Solar gives <b class="num">'+fmt(S.sol)+' kWh</b> a day, piezo marble <b class="num">'+S.pz.toFixed(1)+' kWh</b>, and the battery moves <b class="num">'+fmt(S.dis)+' kWh</b> out of the peak. Together they meet <b class="num">'+Math.round(100*S.ren/S.dayLoad)+'%</b> of demand.';
   const peakFc=Math.max.apply(null,[9,10,11,18,19,20,21].map(h=>ML.fc[h]));
   $('rec').innerHTML='<b>Recommendation for tomorrow.</b> The load model expects peak-window building demand of about <span class="num">'+fmt(peakFc*1.02)+' kW</span> on a day 1°C warmer. The optimiser schedules pre-cooling at <span class="num">06:00 and 15:00</span>, limits chillers to '+(100-P.curtail)+'% in the peak windows and reserves the battery for <span class="num">18:00 to 21:00</span>. Expected saving: <span class="num">'+inr(S.saveDay*1.03)+'</span>.';
   $('mm1').innerHTML='Forecast error (MAPE) <b class="num">'+ML.mape.toFixed(1)+'%</b>, horizon 24 h';
@@ -742,13 +662,13 @@ function updateStatic(){
   $('fin').innerHTML='<h3>Business case</h3>'+
    st('Annual bill saving',inrL(S.saveYear)+' ('+Math.round(100*S.saveDay/S.cBase)+'%)')+
    st('From efficiency and load shifting',inrL(eff*DAYS)+' a year')+
-   st('From solar + battery',inrL(rew*DAYS)+' a year')+
+   st('From solar, piezo and battery',inrL(rew*DAYS)+' a year')+
    st('Retrofit cost',inrL(S.capexTot))+
    st('Payback',isFinite(S.payback)?S.payback.toFixed(1)+' years':'n/a')+
    st('Energy intensity',Math.round(S.intensity)+' kWh/m²/yr (was '+Math.round(S.intensityBase)+')')+
    st('Carbon avoided',S.co2Year.toFixed(0)+' tCO₂e a year')+
    st('Equal to trees planted',fmt(trees)+' trees')+
-   '<p class="note">Retrofit cost assumes ₹42,000 per kW of solar, ₹16,000 per kWh of battery, ₹20 lakh for sensors, controls and VFDs, Working days: '+DAYS+' a year.</p>';
+   '<p class="note">Retrofit cost assumes ₹42,000 per kW of solar, ₹16,000 per kWh of battery, ₹20 lakh for sensors, controls and VFDs, and ₹3.5 lakh of piezo tiles. Working days: '+DAYS+' a year.</p>';
   $('vSolar').textContent=P.solarKw+' kW';$('vBat').textContent=P.batKwh+' kWh';$('vCur').textContent=P.curtail+'%';$('vSet').textContent='+'+P.setOff+'°C';
 }
 
@@ -772,7 +692,6 @@ const card=(title,icon,acc,body)=>'<div class="p" style="--acc:'+acc+'"><h3>'+ic
 const r2=(l,v,c)=>'<div class="r2"><span>'+l+'</span><b class="nv '+(c||'')+'">'+v+'</b></div>';
 const u=x=>'<small>'+x+'</small>';
 const segbar=p=>{let h='<div class="seg">';const n=Math.round(clamp(p,0,100)/10);for(let i=0;i<10;i++)h+='<i class="'+(i<n?'on':'')+'"></i>';return h+'</div>'};
-
 
 const ASSETS=[
  ['Laptops',86,'office IT'],['Fans',42,'ventilation'],['Air conditioners',24,'HVAC'],['Coolers',12,'HVAC'],
@@ -831,6 +750,7 @@ function updateSmartBuilding(s){
   '</div>'; 
 }
 
+
 function updateUI(s){
   $('clk').textContent=hhmm(s.t);
   updateElectrical(s);
@@ -839,20 +759,17 @@ function updateUI(s){
   const savedKwh=Math.max(0,cum(M.base,s.t)-cum(M.grid,s.t));
   const savedRs=Math.max(0,cumCost(M.base,s.t)-cumCost(M.grid,s.t));
   const open=ALERTS.filter(a=>a.t<=s.t).length;
-  const renW=s.load>0?clamp((s.sol+Math.max(0,s.bat))/s.load*100,0,100):0;
+  const renW=s.load>0?clamp((s.sol+s.pz+Math.max(0,s.bat))/s.load*100,0,100):0;
   const anom=s.t>=14.33;
   const cc=s.comfort>=90?'g':s.comfort>=75?'a':'r';
-  const energyPct=S.dayBase>0?100*(S.dayBase-S.dayGrid)/S.dayBase:0;
-  const peakPct=S.pkBase>0?100*(S.pkBase-S.pkGrid)/S.pkBase:0;
-  const aiAction=s.mode==='precool'?'Pre-cooling selected':s.mode==='dr'?'Peak demand response':s.mode==='setback'?'Low-occupancy setback':'Occupancy-aware control';
   $('kpis').innerHTML=
-   '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saved today</h4><div class="kv"><b class="nv">'+fmt(S.dayBase-S.dayGrid)+'<span class="kl">kWh</span></b><b class="nv a" style="font-size:30px">'+inr(savedRs)+'</b></div></div>'+
-   '<div class="p kpi" style="--acc:#8dff5c"><h4>Comfort score</h4><div class="kv"><b class="nv '+cc+'">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:23px;color:#dbe8ff">/100</b></div></div>'+
-   '<div class="p kpi" style="--acc:#ff6a3d"><h4>System alerts</h4><div class="kv"><b class="nv o" style="font-size:38px">'+open+'</b><span class="nv w" style="font-size:22px;color:#9eb5d8">alerts</span></div></div>'+
-   '<div class="p kpi" style="--acc:#3be3f7"><h4>Grid power vs renewables</h4><div class="kv"><b class="nv">'+(100-renW).toFixed(0)+'<span class="kl">%</span></b><b class="nv a">'+renW.toFixed(0)+'<span class="kl">%</span></b></div><span class="kl">from grid &nbsp;&nbsp; solar + battery</span></div>'+
+   '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saved today</h4><div class="kv"><b class="nv">'+fmt(savedKwh)+u('kWh')+'</b><b class="nv a">'+inr(savedRs)+'</b></div></div>'+
+   '<div class="p kpi" style="--acc:#8dff5c"><h4>Comfort score</h4><div class="kv"><b class="nv '+cc+'" style="font-size:40px">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:24px;color:#dbe8ff">/ 100</b></div></div>'+
+   '<div class="p kpi" style="--acc:#ff6a3d"><h4>System alerts</h4><div class="kv"><b class="nv o" style="display:flex;align-items:center;gap:8px"><span style="width:26px;height:26px;display:inline-block">'+ic('pin').replace('class="ic"','class="ic" style="width:26px;height:26px;color:#ff6a3d"')+'</span>'+open+u(open===1?'alert':'alerts')+'</b></div></div>'+
+   '<div class="p kpi" style="--acc:#3be3f7"><h4>Grid power vs renewables</h4><div class="kv"><b class="nv">'+Math.round(100-renW)+'%<span class="kl">from grid</span></b><b class="nv a">'+Math.round(renW)+'%<span class="kl">solar, piezo, battery</span></b></div></div>'+
    '<div class="p kpi" style="--acc:#4f8cff"><h4>HVAC status</h4><ul>'+
      '<li><i class="dotc" style="background:'+(anom?'#ff4d5e':'#8dff5c')+';box-shadow:0 0 8px '+(anom?'#ff4d5e':'#8dff5c')+'"></i>'+(anom?'AHU-03 anomaly detected':'All units normal')+'</li>'+
-     '<li><i class="dotc" style="background:'+(s.mode==='precool'?'#4f8cff':'#8fa6c8')+';box-shadow:0 0 8px currentColor"></i>'+(s.mode==='precool'?'Pre-cooling active':'Auto mode active')+'</li></ul></div>';
+     '<li><i class="dotc" style="background:'+(s.mode==='precool'?'#4f8cff':s.mode==='dr'?'#ffb627':'#8fa6c8')+';box-shadow:0 0 8px currentColor"></i>'+(s.mode==='precool'?'Pre-cooling active':s.mode==='dr'?'Demand response active':s.mode==='setback'?'Night setback':'Auto mode')+'</li></ul></div>';
 
   const iaqMax=Math.max.apply(null,s.zones.map(z=>z.co2));
   const iaq=iaqMax<800?['Good','g']:iaqMax<1000?['Fair','a']:['Poor','r'];
@@ -893,7 +810,7 @@ function updateUI(s){
      '<div class="r2"><span>Avoided per year</span><b class="num" style="color:#c6d6f0">'+S.co2Year.toFixed(0)+' tCO₂e</b></div>')+
    card('Renewables','sun','#ffb627',
      r2('Solar today',fmt(cum(M.sol,s.t))+u('kWh'),'a sm')+
-     r2('Battery discharge',fmt(Math.max(0,s.bat))+u('kW'),'sm')+
+     r2('Piezo marble',(cum(M.pz,s.t)).toFixed(1)+u('kWh'),'sm')+
      '<div class="r2"><span>Covering demand now</span><b class="num" style="color:#ffe27a">'+Math.round(renW)+'%</b></div>');
 
   $('zones').innerHTML=s.zones.map((z,i)=>{
@@ -1257,7 +1174,7 @@ function init3D(){
 let t=7,playing=true,speed=3,cur=snap(t),lastUi=0,last=performance.now(),clock=0;
 function frame(now){
   const dt=Math.min(.1,(now-last)/1000);last=now;clock+=dt;
-  if(playing){t=(t+dt*speed/6)%24;$('tslider').value=t}
+  if(playing){t=(t+dt*speed/3)%24;$('tslider').value=t}
   cur=snap(t);
   if(now-lastUi>90){lastUi=now;updateUI(cur)}
   if(scene3.ok)scene3.update(cur,dt,clock);
