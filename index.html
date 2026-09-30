@@ -998,3 +998,72 @@ function init3D(){
     doorGlow.material.opacity=.3+.7*(1-dayF*.6);
     carA.position.set(((time*1.4)%30)-15,0,8.65);carA.rotation.y=0;
     carB.position.set(15-((time*1.1+9)%30),0,9.75);carB.rotation.y=Math.PI;
+    const pw={sol:s.sol,grid:s.grid,bat:Math.abs(s.bat),pz:s.pz*20};
+    streams.bat.rev=s.bat<-0.5;
+    Object.keys(streams).forEach(k=>{
+      const stt=streams[k],p=pw[k];
+      stt.ph=(stt.ph+dt*(.25+Math.min(p,120)/120*.9))%1;
+      stt.g.forEach((m,i)=>{
+        m.visible=p>0.5;
+        let f=(stt.ph+i/stt.g.length)%1;if(stt.rev)f=1-f;
+        m.position.lerpVectors(stt.a,stt.b,f);
+        m.scale.setScalar(.8+Math.min(p,100)/100*1.0);
+      });
+    });
+    idle+=dt;
+    if(idle>3)sway=Math.sin(time*.22)*.13;else sway*=.95;
+    place();
+    labels.forEach(l=>{
+      const v=l.pos.clone().project(camera);
+      const w=box.clientWidth,h=box.clientHeight;
+      l.el.style.left=((v.x+1)/2*w)+'px';l.el.style.top=((1-v.y)/2*h)+'px';
+      l.el.style.display=v.z<1?'block':'none';
+      let t='';
+      if(l.name==='Solar Panels')t=s.sol.toFixed(0)+' kW';
+      if(l.name==='Battery')t=Math.round(s.socPct*100)+'% charged';
+      if(l.name==='Piezo Floor')t=s.pz.toFixed(2)+' kW';
+      if(l.name==='Chiller Plant')t=(s.hvac*.55).toFixed(0)+' kW';
+      if(l.name==='Grid')t=s.grid.toFixed(0)+' kW';
+      l.em.textContent=t;
+    });
+    if(sel>=0)showInfo();
+    renderer.render(scene,camera);
+  };
+  place();
+}
+
+/* ---------- loop and controls ---------- */
+let t=7,playing=true,speed=3,cur=snap(t),lastUi=0,last=performance.now(),clock=0;
+function frame(now){
+  const dt=Math.min(.1,(now-last)/1000);last=now;clock+=dt;
+  if(playing){t=(t+dt*speed/3)%24;$('tslider').value=t}
+  cur=snap(t);
+  if(now-lastUi>90){lastUi=now;updateUI(cur)}
+  if(scene3.ok)scene3.update(cur,dt,clock);
+  requestAnimationFrame(frame);
+}
+$('tslider').addEventListener('input',e=>{t=parseFloat(e.target.value)});
+$('play').addEventListener('click',()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play';$('play').classList.toggle('on',playing)});
+$('speed').addEventListener('change',e=>{speed=parseFloat(e.target.value)});
+
+function recompute(){
+  const r=model(P);M=r.M;S=r.S;ML=mlSeries();
+  updateStatic();refreshCharts();
+}
+const SL=[['sSolar','solarKw'],['sBat','batKwh'],['sCur','curtail'],['sSet','setOff']];
+SL.forEach(([id,key])=>{
+  $(id).value=P[key];
+  $(id).addEventListener('input',e=>{P[key]=parseFloat(e.target.value);recompute()});
+});
+$('reset').addEventListener('click',()=>{P=Object.assign({},P0);SL.forEach(([id,k])=>{$(id).value=P[k]});recompute()});
+
+buildRail();
+updateStatic();
+buildCharts();
+init3D();
+updateUI(cur);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
