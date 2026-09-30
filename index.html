@@ -205,17 +205,19 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 .rank-bar{height:6px;border-radius:4px;background:rgba(120,160,230,.13);overflow:hidden}.rank-bar i{display:block;height:100%;background:linear-gradient(90deg,#4f8cff,#8dff5c)}
 /* reference dashboard template */
 .hero-intro{display:none!important}
-main{max-width:1600px;padding:14px 20px 48px}
-.kpis{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:14px}
-.kpi{min-height:138px;padding:14px 16px 12px;border-radius:9px;background:linear-gradient(180deg,rgba(22,40,76,.96),rgba(8,18,39,.97));}
+main{max-width:1600px;margin:0 auto;padding:14px 20px 48px}
+#hud{display:block}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.kpi{min-height:138px;padding:14px 16px 12px;border-radius:9px;background:linear-gradient(180deg,rgba(22,40,76,.96),rgba(8,18,39,.97))}
 .kpi h4{font-size:16px;margin-bottom:9px;padding-bottom:8px}
 .kpi .kv{gap:10px}
 .kpi .nv{font-size:38px}
 .kpi .kl{font-size:12px}
-.hud{grid-template-columns:340px minmax(520px,1fr) 340px;gap:14px}
-.stage{min-height:620px}
-.twin{border-radius:10px;background:#071225;box-shadow:0 0 38px rgba(40,100,230,.22)}
-.twin-head,.hint{display:none}
+.hud{display:grid;grid-template-columns:340px minmax(520px,1fr) 340px;gap:14px;align-items:stretch}
+.stage{min-height:620px;height:620px}
+.twin{height:100%;min-height:620px;border-radius:10px;background:#071225;box-shadow:0 0 38px rgba(40,100,230,.22)}
+.twin-head{display:none}
+.hint{display:block}
 .zoom{right:12px;top:12px}
 .col{gap:14px}
 .col .p{padding:14px 16px}
@@ -223,13 +225,13 @@ main{max-width:1600px;padding:14px 20px 48px}
 .r2{padding:5px 0}
 .r2 span{font-size:14px}
 .nv{font-size:27px}
-.charts2{gap:14px;margin-top:14px}
+.charts2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .chartbox{height:265px}
 section{margin-top:34px}
 .sec-head{margin-bottom:12px}
 @media(max-width:1250px){.hud{grid-template-columns:290px minmax(420px,1fr) 290px}.kpis{gap:10px}.kpi .nv{font-size:32px}}
-@media(max-width:1000px){.hud{grid-template-columns:1fr}.stage{min-height:600px}.col{display:grid;grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){main{padding:10px}.kpis{grid-template-columns:1fr}.col{grid-template-columns:1fr}.stage{min-height:500px}}
+@media(max-width:1000px){.hud{grid-template-columns:1fr}.stage,.twin{min-height:600px;height:600px}.col{display:grid;grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){main{padding:10px}.kpis{grid-template-columns:1fr}.col{grid-template-columns:1fr}.stage,.twin{min-height:500px;height:500px}.charts2{grid-template-columns:1fr}}
 .hero-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:12px 0 12px;padding:14px 16px;border:1px solid rgba(86,140,230,.35);border-radius:9px;background:linear-gradient(100deg,rgba(20,40,78,.82),rgba(9,18,38,.68));box-shadow:0 0 24px rgba(30,90,220,.10)}
 .hero-kicker{font:600 11px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
 .hero-intro h1{font:700 25px var(--disp);margin:0;letter-spacing:.01em}
@@ -942,9 +944,9 @@ function init3D(){
   box.insertBefore(renderer.domElement,box.firstChild);
   const scene=new THREE.Scene();
   scene.fog=new THREE.Fog(0x0b1a3a,30,64);
-  const camera=new THREE.PerspectiveCamera(34,1,.1,220);
-  const target=new THREE.Vector3(.15,2.35,.55);
-  let theta=.74,phi=1.0,radius=18.5,idle=0,sway=0;
+  const camera=new THREE.PerspectiveCamera(30,1,.1,220);
+  const target=new THREE.Vector3(.6,2.1,.8);
+  let theta=.74,phi=1.0,radius=25,idle=0,sway=0;
   function place(){
     camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta+sway),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta+sway));
     camera.lookAt(target);
@@ -980,12 +982,12 @@ function init3D(){
   const concrete=MT(0xb4bdc8,{roughness:.6});
   const wall=MT(0xd3d9e0,{roughness:.7});
   const frame=MT(0x27384f,{roughness:.4,metalness:.4});
-  const glassSide=new THREE.MeshStandardMaterial({color:0x6ec6ff,transparent:true,opacity:.22,roughness:.08,metalness:.55,depthWrite:false});
-  const glassFront=new THREE.MeshStandardMaterial({color:0xa6e0ff,transparent:true,opacity:.035,roughness:.04,metalness:.45,depthWrite:false});
+  const glassSide=new THREE.MeshStandardMaterial({color:0x6ec6ff,transparent:true,opacity:.30,roughness:.1,metalness:.5,depthWrite:false});
+  const glassFront=new THREE.MeshStandardMaterial({color:0xa6e0ff,transparent:true,opacity:.09,roughness:.05,metalness:.4,depthWrite:false});
   const wood=MT(0x8f5d36,{roughness:.6});
   const deskDark=MT(0x3a2a20);
   const chairM=MT(0x22303f);
-  const FH=1.02,SL=.1,W=7.2,D=5.6;
+  const FH=.92,SL=.1,W=6.4,D=5;
   const floors=[],lightMats=[],screenMats=[],peopleG=[],diffs=[];
   const PPL=[0xff8a3d,0x3be3f7,0xf2f2f2,0x8dff5c,0xff5e8a,0xa98bff];
   for(let i=0;i<5;i++){
@@ -1027,43 +1029,7 @@ function init3D(){
     }
     diffs.push(dg);
   }
-  /* premium architectural cutaway facade */
   const yT=5*(FH+SL)+SL;
-  const balconyM=MT(0xb9c4cf,{roughness:.45,metalness:.35});
-  const railM=new THREE.MeshStandardMaterial({color:0x8fa7b9,transparent:true,opacity:.72,roughness:.25,metalness:.65});
-  const warmGlass=new THREE.MeshStandardMaterial({color:0xffc46b,emissive:0xff9b38,emissiveIntensity:.18,transparent:true,opacity:.16,roughness:.08,metalness:.2});
-  for(let bi=0;bi<4;bi++){
-    const by=SL+(bi+.05)*(FH+SL);
-    const slab=put(bx(W-.25,.08,.72,balconyM),.25,by+.05,D/2+.28);
-    put(bx(W-.38,.045,.045,railM),.25,by+.62,D/2+.62);
-    put(bx(.045,.62,.045,railM),-W/2+.15,by+.34,D/2+.62);
-    put(bx(.045,.62,.045,railM),W/2-.15,by+.34,D/2+.62);
-    for(let rk=0;rk<8;rk++)put(bx(.025,.55,.025,railM),-W/2+.45+rk*(W-0.9)/7,by+.32,D/2+.62);
-    put(bx(W-.55,.72,.035,warmGlass),.25,by+.39,D/2+.035);
-  }
-  const facadeFrame=MT(0x2b4053,{roughness:.32,metalness:.5});
-  for(let k=0;k<6;k++)put(bx(.09,5*(FH+SL)-.2,.12,facadeFrame),-W/2+.45+k*(W-.9)/5,2.7,D/2+.12);
-  for(let bi=0;bi<5;bi++){
-    const fy=SL+bi*(FH+SL)+.07;
-    put(bx(W-.5,.055,.08,facadeFrame),0,fy,D/2+.16);
-  }
-  /* roof service zone: battery + HVAC cabinets */
-  const roofMetal=MT(0x687b8c,{roughness:.4,metalness:.55});
-  const batteryBody=put(bx(1.55,.72,1.05,MT(0x315f52,{roughness:.42,metalness:.35})),-1.45,yT+.42,1.55);
-  put(bx(1.28,.42,.035,MT(0x182c35,{roughness:.28,metalness:.6})),-1.45,yT+.45,2.08);
-  for(let q=0;q<4;q++)put(bx(.18,.38,.04,new THREE.MeshBasicMaterial({color:q%2?0x42d9ff:0x8fffc5})),-1.9+q*.3,yT+.46,2.11);
-  put(bx(1.75,.62,.9,roofMetal),1.35,yT+.34,-1.25);
-  for(let q=0;q<2;q++){
-    const fanTop=put(new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.045,24),new THREE.MeshBasicMaterial({color:0x9caebc})),1.0+q*.7,yT+.67,-1.25);
-    const hub=put(new THREE.Mesh(new THREE.SphereGeometry(.06,10,10),new THREE.MeshBasicMaterial({color:0x35d8ff})),1.0+q*.7,yT+.7,-1.25);
-  }
-  /* rooftop greenery + planters */
-  const plantM=MT(0x2f9a48,{roughness:.9});
-  for(let q=0;q<5;q++){
-    put(bx(.55,.18,.42,MT(0x596b5c,{roughness:.8})),2.0+q*.62,yT+.18,1.75);
-    put(new THREE.Mesh(new THREE.IcosahedronGeometry(.28,0),plantM),2.0+q*.62,yT+.43,1.75);
-  }
-
   put(bx(W+.3,SL,D+.3,concrete),0,5*(FH+SL)+SL/2,0);
   const par=MT(0xaab4c1);
   put(bx(W+.3,.22,.1,par),0,yT+.11,D/2+.1);put(bx(W+.3,.22,.1,par),0,yT+.11,-D/2-.1);
