@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>VoltSense BEMS: Smart Building Energy & Occupant Experience</title>
+<title>VoltSense BEMS: Smart Building Digital Twin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -165,49 +165,6 @@ td.r,th.r{text-align:right}
 .note{font-size:12.5px;color:var(--mute);margin-top:10px}
 footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
 
-
-
-/* smart-building challenge outcome */
-.smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.smart-card{position:relative;padding:14px;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,rgba(21,38,72,.92),rgba(9,18,38,.95))}
-.smart-card h3{margin:0 0 7px;padding-bottom:7px;border-bottom:1px solid var(--line)}
-.smart-value{font:600 29px var(--disp);color:var(--teal);line-height:1.1}
-.smart-value.g{color:var(--green)} .smart-value.a{color:var(--amber)} .smart-value.v{color:var(--violet)}
-.smart-sub{font-size:12px;color:var(--mute);margin-top:4px}
-.smart-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.smart-compare div{padding:8px;border-radius:6px;background:rgba(20,36,68,.55);border:1px solid rgba(86,140,230,.18)}
-.smart-compare b{display:block;font:600 18px var(--disp);margin-top:2px}
-.smart-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:12px}
-.smart-flow div{padding:12px;background:rgba(20,36,68,.55);border:1px solid var(--line);position:relative}
-.smart-flow div+div{border-left:0}
-.smart-flow div:first-child{border-radius:8px 0 0 8px}.smart-flow div:last-child{border-radius:0 8px 8px 0}
-.smart-flow b{display:block;font-family:var(--disp);font-size:14px}.smart-flow span{font-size:12px;color:var(--mute)}
-.smart-action{margin-top:12px;border-left:4px solid var(--teal);padding:12px 14px;background:rgba(59,227,247,.06);border-radius:0 8px 8px 0}
-.smart-action b{color:var(--teal)}
-@media(max-width:1000px){.smart-grid{grid-template-columns:repeat(2,1fr)}.smart-flow{grid-template-columns:1fr 1fr}.smart-flow div+div{border-left:1px solid var(--line)}.smart-flow div:nth-child(3){border-radius:0 0 0 8px}.smart-flow div:nth-child(4){border-radius:0 0 8px 0}}
-@media(max-width:640px){.smart-grid{grid-template-columns:1fr}.smart-flow{grid-template-columns:1fr}.smart-flow div+div{border-left:1px solid var(--line);border-top:0}.smart-flow div:first-child{border-radius:8px 8px 0 0}.smart-flow div:last-child{border-radius:0 0 8px 8px}}
-
-/* electrical health dashboard */
-.elec-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
-.elec-meters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.emeter{padding:11px;border:1px solid var(--line);border-radius:7px;background:rgba(20,36,68,.62)}
-.emeter b{display:block;font-family:var(--disp);font-size:25px;color:var(--teal)}
-.emeter span{font-size:11.5px;color:var(--mute)}
-.healthbar{height:8px;border-radius:5px;background:rgba(120,160,230,.14);overflow:hidden;margin-top:7px}
-.healthbar i{display:block;height:100%;background:linear-gradient(90deg,#8dff5c,#ffb627,#ff4d5e)}
-.risk-list{display:grid;gap:8px}
-.risk-item{display:grid;grid-template-columns:82px 1fr auto;gap:10px;align-items:center;padding:9px;border:1px solid rgba(86,140,230,.2);border-radius:7px;background:rgba(9,18,38,.55)}
-.risk-item b{font-family:var(--disp)}
-.risk-item small{margin:0;color:var(--mute)}
-.risk-high{color:var(--red)} .risk-med{color:var(--amber)} .risk-low{color:var(--green)}
-.asset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.asset{padding:11px;border:1px solid var(--line);border-radius:7px;background:rgba(20,36,68,.55)}
-.asset .count{font:600 27px var(--disp);color:#e8f1ff}
-.asset .on{color:var(--green);font-size:12px}.asset .tot{color:var(--mute);font-size:12px}
-.ac-effect{border-left:4px solid var(--red);background:rgba(255,77,94,.07);padding:12px 14px;border-radius:0 7px 7px 0}
-.ac-effect b{color:#ff8b96}
-@media(max-width:900px){.elec-grid{grid-template-columns:1fr}.elec-meters{grid-template-columns:repeat(2,1fr)}.asset-grid{grid-template-columns:repeat(2,1fr)}}
-
 @media (max-width:1180px){
   .hud{grid-template-columns:1fr 1fr}
   .stage{grid-column:1/-1;order:-1;min-height:560px}
@@ -238,7 +195,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 <body>
 <header class="rail">
   <div class="rail-in">
-    <div class="brand"><div class="logo">V</div><div><b>VoltSense BEMS</b><small>Smart building energy, comfort & digital twin</small></div></div>
+    <div class="brand"><div class="logo">V</div><div><b>VoltSense BEMS</b><small>Tower A digital twin, simulation mode</small></div></div>
     <div class="scrub">
       <div class="scrub-top"><span>Simulated day: drag to travel through time</span><span class="clk num" id="clk">00:00</span></div>
       <div class="track" id="track">
@@ -253,7 +210,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <select class="btn" id="speed" aria-label="Simulation speed"><option value="1">1x</option><option value="3" selected>3x</option><option value="10">10x</option></select>
     </div>
   </div>
-  <nav class="subnav"><a href="#hud">Command center</a><a href="#smart">Smart building outcomes</a><a href="#grid">Peak shifting & grid response</a><a href="#hvac">HVAC & comfort</a><a href="#electrical">Electrical health</a><a href="#ml">AI models</a><a href="#finance">Savings & economics</a></nav>
+  <nav class="subnav"><a href="#hud">Command center</a><a href="#grid">Peak shifting and TOD</a><a href="#hvac">HVAC and comfort</a><a href="#ml">ML models</a><a href="#finance">Savings and carbon</a></nav>
 </header>
 
 <main>
@@ -277,11 +234,6 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   </div>
 </div>
 
-<section id="smart">
-  <div class="sec-head"><h2>Smart building energy & occupant experience</h2><p>VoltSense combines energy, occupancy and indoor conditions to optimise building operation, shift flexible loads away from peaks, and preserve comfort. The 3D digital twin remains the visual control surface for the building.</p></div>
-  <div id="smartDash"></div>
-</section>
-
 <section id="grid">
   <div class="sec-head"><h2>Peak load shifting and time-of-day tariff</h2><p>The building cools itself before the tariff peak, coasts through it on stored cold and battery power, then recovers on cheaper units.</p></div>
   <div class="card"><div class="steps" id="steps" style="margin-top:0"></div></div>
@@ -300,14 +252,8 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   </div>
 </section>
 
-
-<section id="electrical">
-  <div class="sec-head"><h2>Electrical health & predictive maintenance — advanced layer</h2><p>Power-quality and equipment diagnostics remain part of the BEMS: AC distribution, DC/UPS loads, harmonics, voltage unbalance and equipment health are monitored alongside energy and comfort.</p></div>
-  <div id="elecDash"></div>
-</section>
-
 <section id="ml">
-  <div class="sec-head"><h2>AI optimisation & prediction layer</h2><p>Three models feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
+  <div class="sec-head"><h2>Machine learning layer</h2><p>Three models feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
   <div class="rec" id="rec"></div>
   <div class="grid2e" style="margin-top:14px">
     <div class="card"><h3>Occupancy forecast</h3><div class="chartbox sm"><canvas id="cOc"></canvas></div></div>
@@ -321,7 +267,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 </section>
 
 <section id="finance">
-  <div class="sec-head"><h2>Energy savings, retrofit economics & carbon</h2><p>Change the design and see the business case move. Costs are typical Indian commercial rates, editable in the code.</p></div>
+  <div class="sec-head"><h2>Savings, payback and carbon</h2><p>Change the design and see the business case move. Costs are typical Indian commercial rates, editable in the code.</p></div>
   <div class="grid2e">
     <div class="card">
       <h3>What-if design</h3>
@@ -342,7 +288,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <div><b>Edge gateway</b><span>BACnet, Modbus to MQTT. Real-time control stays on site</span></div>
       <div><b>Cloud data layer</b><span>Time-series store with tariff and weather feeds</span></div>
       <div><b>ML services</b><span>Forecast, occupancy, fault detection, pre-cool optimiser</span></div>
-      <div><b>BMS / DISCOM integration</b><span>Operators, occupant feedback and grid demand-response signals via open APIs</span></div>
+      <div><b>This dashboard</b><span>Operators, occupants and grid demand-response signals</span></div>
     </div>
   </div>
 </section>
@@ -669,125 +615,8 @@ const r2=(l,v,c)=>'<div class="r2"><span>'+l+'</span><b class="nv '+(c||'')+'">'
 const u=x=>'<small>'+x+'</small>';
 const segbar=p=>{let h='<div class="seg">';const n=Math.round(clamp(p,0,100)/10);for(let i=0;i<10;i++)h+='<i class="'+(i<n?'on':'')+'"></i>';return h+'</div>'};
 
-
-/* ---------- electrical health / asset intelligence ---------- */
-const ASSETS=[
-  ['Laptops',86,'office IT'],['Fans',42,'ventilation'],['Air conditioners',24,'HVAC'],['Coolers',12,'HVAC'],
-  ['Lifts',4,'vertical transport'],['Lighting circuits',310,'lighting'],['Printers',14,'office'],['Servers & UPS',8,'critical']
-];
-function electricalState(s){
-  const fault=s.t>=14.33&&s.t<16.9;
-  const peak=s.cls==='peak';
-  const occ=clamp(s.occ,0,100);
-  const load=Math.max(1,s.load);
-  const v=415+2.2*Math.sin(s.t*1.7);
-  const f=50+0.035*Math.sin(s.t*2.1);
-  const thdBase=2.8+1.1*(load/160);
-  const thd=thdBase+(fault?4.9:0)+(peak?1.0:0)+1.1*Math.max(0,occ-65)/35;
-  const pf=clamp(.985-thd*.006-(fault?.055:0),.72,.99);
-  const unb=0.7+0.18*Math.sin(s.t*1.4)+(fault?2.6:0);
-  const current=load*1000/(Math.sqrt(3)*v*Math.max(pf,.7));
-  const kvar=load*Math.tan(Math.acos(pf));
-  const kva=Math.sqrt(load*load+kvar*kvar);
-  const dcV=380+4*Math.sin(s.t*1.1);
-  const dcI=load*.18*(.65+.35*occ/100);
-  const ripple=.8+(fault?1.8:0)+thd*.08;
-  const neutral=18+thd*7+(fault?22:0);
-  const risk=Math.round(clamp((thd-4)*11+unb*8+(fault?22:0),8,96));
-  const assets=ASSETS.map((a,i)=>{
-    let ratio=i===0?.72:i===1?.55:i===2?.68:i===3?.45:i===4?.35:i===5?.76:i===6?.42:.9;
-    if(occ<10)ratio*=.18; else ratio*=.55+.45*occ/100;
-    if((s.mode==='dr'||peak)&&[2,4,7].includes(i))ratio*=.72;
-    return {name:a[0],total:a[1],on:Math.round(a[1]*clamp(ratio,0,1)),type:a[2]};
-  });
-  const risks=[
-    ['Floor 3 DB','AC','Harmonics / neutral heating',clamp(risk+9,0,99)],
-    ['HVAC plant','AC','AHU/chiller current drift',clamp(risk-3,0,99)],
-    ['Electrical room','AC+DC','DC ripple + AC THD coupling',clamp(risk-8,0,99)],
-    ['Lift panel','AC','Voltage unbalance',clamp(risk-16,0,99)]
-  ];
-  return {fault,peak,v,f,thd,pf,unb,current,kvar,kva,dcV,dcI,ripple,neutral,risk,assets,risks};
-}
-function riskClass(v){return v>=70?'risk-high':v>=40?'risk-med':'risk-low'}
-function updateElectrical(s){
-  const e=electricalState(s);
-  const meter=(label,val,unit)=>'<div class="emeter"><span>'+label+'</span><b class="num">'+val+' <small>'+unit+'</small></b></div>';
-  const totalOn=e.assets.reduce((a,x)=>a+x.on,0), total=e.assets.reduce((a,x)=>a+x.total,0);
-  $('elecDash').innerHTML=
-   '<div class="elec-grid">'+
-   '<div class="p" style="--acc:#3be3f7"><h3>'+ic('grid')+' AC distribution — live simulated meter</h3>'+
-     '<div class="elec-meters">'+
-       meter('Line voltage',e.v.toFixed(1),'V')+meter('Frequency',e.f.toFixed(2),'Hz')+
-       meter('3-phase current',e.current.toFixed(1),'A')+meter('Active power',s.load.toFixed(1),'kW')+
-       meter('Apparent power',e.kva.toFixed(1),'kVA')+meter('Reactive power',e.kvar.toFixed(1),'kVAr')+
-       meter('Power factor',e.pf.toFixed(3),'PF')+meter('Voltage unbalance',e.unb.toFixed(2),'%')+
-     '</div>'+
-     '<div style="margin-top:12px"><div class="r2"><span>Current THD — harmonic stress</span><b class="num '+(e.thd>8?'risk-high':e.thd>5?'risk-med':'risk-low')+'">'+e.thd.toFixed(2)+'%</b></div><div class="healthbar"><i style="width:'+clamp(e.thd/12*100,0,100)+'%"></i></div></div>'+
-     '<div class="r2" style="margin-top:9px"><span>Neutral current</span><b class="num">'+e.neutral.toFixed(0)+' A</b></div>'+
-     '</div>'+
-   '<div class="p" style="--acc:#a98bff"><h3>'+ic('battery')+' DC bus / UPS side</h3>'+
-     '<div class="elec-meters">'+meter('DC bus',e.dcV.toFixed(1),'V')+meter('DC current',e.dcI.toFixed(1),'A')+meter('DC ripple',e.ripple.toFixed(2),'%')+meter('System health',Math.round(100-e.risk),'%')+'</div>'+
-     '<p class="note">DC converters/UPS can inject switching harmonics into the common electrical network. The AC-side THD monitor therefore rises when nonlinear DC loads are stressed.</p>'+
-     '<div class="r2"><span>Harmonic risk index</span><b class="num '+riskClass(e.risk)+'">'+e.risk+' / 100</b></div>'+
-   '</div></div>'+
-   '<div class="p" style="--acc:#ff4d5e;margin-top:14px">'+
-     '<h3>'+ic('alert')+' Pre-fault detection — what gets affected first?</h3>'+
-     '<div class="ac-effect"><b>'+ (e.fault?'Electrical disturbance detected: AC equipment is showing higher stress than DC loads.':'No active fault. Monitoring harmonic signatures before they cross the alarm threshold.') +'</b><div class="note">'+
-     (e.fault?'Sensitive AC loads such as HVAC drives, lift motors and distribution-board circuits are being affected more strongly because harmonic current and voltage unbalance increase heating, losses and nuisance-trip risk.':'The model watches THD, neutral current, voltage unbalance, PF and load deviation together so an operator can intervene before a hard fault.')+
-     '</div></div>'+
-   '</div>'+
-   '<div class="elec-grid" style="margin-top:14px">'+
-     '<div class="p" style="--acc:#8dff5c"><h3>'+ic('users')+' Building equipment operating now</h3><div class="asset-grid">'+
-       e.assets.map(a=>'<div class="asset"><div><b>'+a.name+'</b></div><div class="count num">'+a.on+' <span class="on">ON</span> <span class="tot">/ '+a.total+'</span></div><div class="note">'+a.type+'</div></div>').join('')+
-     '</div><div class="r2" style="margin-top:10px"><span>Total monitored equipment</span><b class="num">'+totalOn+' / '+total+' operating</b></div></div>'+
-     '<div class="p" style="--acc:#ffb627"><h3>'+ic('alert')+' Fault probability zones</h3><div class="risk-list">'+
-       e.risks.map(r=>'<div class="risk-item"><b>'+r[0]+'</b><small>'+r[1]+' · '+r[2]+'</small><strong class="'+riskClass(r[3])+'">'+r[3]+'/100</strong></div>').join('')+
-     '</div><p class="note">Risk score is a simulated demonstration metric, not a measured probability. With real CT/PT, power-quality meter, VFD, vibration and temperature feeds, this layer can be trained on the building's healthy baseline.</p></div>'+
-   '</div>';
-}
-
-
-function updateSmartBuilding(s){
-  const saved=Math.max(0,S.dayBase-S.dayGrid);
-  const pct=S.dayBase>0?100*saved/S.dayBase:0;
-  const peakDrop=Math.max(0,S.peakDropPct);
-  const flexible=Math.max(0,(s.hvac*Math.max(P.curtail,0)/100)+Math.max(0,s.bat));
-  const comfort=Math.round(s.comfort);
-  const comfortCls=comfort>=90?'g':comfort>=75?'a':'';
-  let action,detail;
-  if(s.mode==='precool'){
-    action='Pre-cool before peak';
-    detail='Use lower-tariff hours and mild outdoor conditions to reduce later HVAC demand.';
-  }else if(s.mode==='dr'){
-    action='Demand response active';
-    detail='Trim flexible HVAC load and use stored energy while keeping occupied zones within comfort limits.';
-  }else if(s.mode==='setback'){
-    action='Low-occupancy setback';
-    detail='Reduce HVAC and lighting in lightly occupied zones instead of conditioning empty space.';
-  }else{
-    action='Occupancy-aware optimisation';
-    detail='Continuously balance load, occupancy, indoor air quality and thermal comfort.';
-  }
-  $('smartDash').innerHTML=
-    '<div class="smart-grid">'+
-      '<div class="smart-card"><h3>Energy efficiency</h3><div class="smart-value">'+fmt(saved)+' kWh/day</div><div class="smart-sub">estimated reduction vs baseline</div><div class="smart-compare"><div><span class="smart-sub">Baseline</span><b class="num">'+fmt(S.dayBase)+' kWh</b></div><div><span class="smart-sub">Optimised</span><b class="num" style="color:var(--green)">'+fmt(S.dayGrid)+' kWh</b></div></div><div class="smart-sub"><b>'+pct.toFixed(1)+'%</b> modeled reduction</div></div>'+
-      '<div class="smart-card"><h3>Occupant experience</h3><div class="smart-value '+comfortCls+'">'+comfort+' / 100</div><div class="smart-sub">live comfort score</div><div class="smart-compare"><div><span class="smart-sub">Occupancy</span><b class="num">'+Math.round(s.occ)+'%</b></div><div><span class="smart-sub">Highest CO₂</span><b class="num">'+Math.max.apply(null,s.zones.map(z=>z.co2))+' ppm</b></div></div><div class="smart-sub">'+(comfort>=90?'Comfort conditions maintained':'Comfort threshold needs attention')+'</div></div>'+
-      '<div class="smart-card"><h3>Grid responsiveness</h3><div class="smart-value a">'+Math.round(peakDrop)+'%</div><div class="smart-sub">peak-window grid-demand reduction</div><div class="smart-compare"><div><span class="smart-sub">Flexible now</span><b class="num">'+flexible.toFixed(0)+' kW</b></div><div><span class="smart-sub">Mode</span><b style="font-size:16px">'+(s.mode==='dr'?'Demand response':s.mode==='precool'?'Pre-cooling':'Auto')+'</b></div></div><div class="smart-sub">Pre-cooling + battery + load shifting</div></div>'+
-      '<div class="smart-card"><h3>AI action now</h3><div class="smart-value v" style="font-size:23px">'+action+'</div><div class="smart-sub" style="margin-top:8px">'+detail+'</div><div class="smart-action"><b>Comfort gate:</b> control actions are allowed only while occupied-zone comfort stays within the modeled threshold.</div></div>'+
-    '</div>'+
-    '<div class="smart-flow">'+
-      '<div><b>1 · Sense</b><span>Energy meters, occupancy, CO₂, temperature, lighting and equipment health</span></div>'+
-      '<div><b>2 · Predict</b><span>Load forecast + occupancy forecast + anomaly detection</span></div>'+
-      '<div><b>3 · Optimise</b><span>HVAC, lighting, battery and flexible loads respond to tariff and occupancy</span></div>'+
-      '<div><b>4 · Verify</b><span>kWh saved, peak reduction and comfort are measured against the baseline</span></div>'+
-    '</div>'+
-    '<p class="note">Demonstration values are simulated. The energy-saving percentage is calculated from the modeled baseline and optimised grid consumption, not from a real building meter.</p>';
-}
-
 function updateUI(s){
   $('clk').textContent=hhmm(s.t);
-  updateElectrical(s);
-  updateSmartBuilding(s);
   $('needle').style.left=(s.t/24*100)+'%';
   const savedKwh=Math.max(0,cum(M.base,s.t)-cum(M.grid,s.t));
   const savedRs=Math.max(0,cumCost(M.base,s.t)-cumCost(M.grid,s.t));
@@ -1169,3 +998,72 @@ function init3D(){
     doorGlow.material.opacity=.3+.7*(1-dayF*.6);
     carA.position.set(((time*1.4)%30)-15,0,8.65);carA.rotation.y=0;
     carB.position.set(15-((time*1.1+9)%30),0,9.75);carB.rotation.y=Math.PI;
+    const pw={sol:s.sol,grid:s.grid,bat:Math.abs(s.bat),pz:s.pz*20};
+    streams.bat.rev=s.bat<-0.5;
+    Object.keys(streams).forEach(k=>{
+      const stt=streams[k],p=pw[k];
+      stt.ph=(stt.ph+dt*(.25+Math.min(p,120)/120*.9))%1;
+      stt.g.forEach((m,i)=>{
+        m.visible=p>0.5;
+        let f=(stt.ph+i/stt.g.length)%1;if(stt.rev)f=1-f;
+        m.position.lerpVectors(stt.a,stt.b,f);
+        m.scale.setScalar(.8+Math.min(p,100)/100*1.0);
+      });
+    });
+    idle+=dt;
+    if(idle>3)sway=Math.sin(time*.22)*.13;else sway*=.95;
+    place();
+    labels.forEach(l=>{
+      const v=l.pos.clone().project(camera);
+      const w=box.clientWidth,h=box.clientHeight;
+      l.el.style.left=((v.x+1)/2*w)+'px';l.el.style.top=((1-v.y)/2*h)+'px';
+      l.el.style.display=v.z<1?'block':'none';
+      let t='';
+      if(l.name==='Solar Panels')t=s.sol.toFixed(0)+' kW';
+      if(l.name==='Battery')t=Math.round(s.socPct*100)+'% charged';
+      if(l.name==='Piezo Floor')t=s.pz.toFixed(2)+' kW';
+      if(l.name==='Chiller Plant')t=(s.hvac*.55).toFixed(0)+' kW';
+      if(l.name==='Grid')t=s.grid.toFixed(0)+' kW';
+      l.em.textContent=t;
+    });
+    if(sel>=0)showInfo();
+    renderer.render(scene,camera);
+  };
+  place();
+}
+
+/* ---------- loop and controls ---------- */
+let t=7,playing=true,speed=3,cur=snap(t),lastUi=0,last=performance.now(),clock=0;
+function frame(now){
+  const dt=Math.min(.1,(now-last)/1000);last=now;clock+=dt;
+  if(playing){t=(t+dt*speed/3)%24;$('tslider').value=t}
+  cur=snap(t);
+  if(now-lastUi>90){lastUi=now;updateUI(cur)}
+  if(scene3.ok)scene3.update(cur,dt,clock);
+  requestAnimationFrame(frame);
+}
+$('tslider').addEventListener('input',e=>{t=parseFloat(e.target.value)});
+$('play').addEventListener('click',()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play';$('play').classList.toggle('on',playing)});
+$('speed').addEventListener('change',e=>{speed=parseFloat(e.target.value)});
+
+function recompute(){
+  const r=model(P);M=r.M;S=r.S;ML=mlSeries();
+  updateStatic();refreshCharts();
+}
+const SL=[['sSolar','solarKw'],['sBat','batKwh'],['sCur','curtail'],['sSet','setOff']];
+SL.forEach(([id,key])=>{
+  $(id).value=P[key];
+  $(id).addEventListener('input',e=>{P[key]=parseFloat(e.target.value);recompute()});
+});
+$('reset').addEventListener('click',()=>{P=Object.assign({},P0);SL.forEach(([id,k])=>{$(id).value=P[k]});recompute()});
+
+buildRail();
+updateStatic();
+buildCharts();
+init3D();
+updateUI(cur);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
