@@ -1001,6 +1001,7 @@ function init3D(){
     diffs.push(dg);
   }
   /* premium architectural cutaway facade */
+  const yT=5*(FH+SL)+SL;
   const balconyM=MT(0xb9c4cf,{roughness:.45,metalness:.35});
   const railM=new THREE.MeshStandardMaterial({color:0x8fa7b9,transparent:true,opacity:.72,roughness:.25,metalness:.65});
   const warmGlass=new THREE.MeshStandardMaterial({color:0xffc46b,emissive:0xff9b38,emissiveIntensity:.18,transparent:true,opacity:.16,roughness:.08,metalness:.2});
@@ -1036,7 +1037,6 @@ function init3D(){
     put(new THREE.Mesh(new THREE.IcosahedronGeometry(.28,0),plantM),2.0+q*.62,yT+.43,1.75);
   }
 
-  const yT=5*(FH+SL)+SL;
   put(bx(W+.3,SL,D+.3,concrete),0,5*(FH+SL)+SL/2,0);
   const par=MT(0xaab4c1);
   put(bx(W+.3,.22,.1,par),0,yT+.11,D/2+.1);put(bx(W+.3,.22,.1,par),0,yT+.11,-D/2-.1);
