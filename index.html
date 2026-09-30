@@ -175,13 +175,28 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 .smart-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .smart-compare div{padding:8px;border-radius:6px;background:rgba(20,36,68,.55);border:1px solid rgba(86,140,230,.18)}
 .smart-compare b{display:block;font:600 18px var(--disp);margin-top:2px}
-.smart-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:12px}
-.smart-flow div{padding:12px;background:rgba(20,36,68,.55);border:1px solid var(--line)}
+.smart-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:12px}
+.smart-flow div{padding:11px 12px;background:rgba(20,36,68,.55);border:1px solid var(--line);position:relative;overflow:hidden}
 .smart-flow div+div{border-left:0}
 .smart-flow div:first-child{border-radius:8px 0 0 8px}.smart-flow div:last-child{border-radius:0 8px 8px 0}
-.smart-flow b{display:block;font-family:var(--disp);font-size:14px}.smart-flow span{font-size:12px;color:var(--mute)}
-.smart-action{margin-top:12px;border-left:4px solid var(--teal);padding:12px 14px;background:rgba(59,227,247,.06);border-radius:0 8px 8px 0}
+.smart-flow div::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;background:var(--flow,var(--teal));box-shadow:0 0 9px var(--flow,var(--teal))}
+.smart-flow b{display:block;font-family:var(--disp);font-size:13.5px}.smart-flow span{font-size:11.5px;color:var(--mute)}
+.smart-action{margin-top:12px;border-left:4px solid var(--teal);padding:12px 14px;background:linear-gradient(90deg,rgba(59,227,247,.09),rgba(59,227,247,.025));border-radius:0 8px 8px 0}
 .smart-action b{color:var(--teal)}
+.hero-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:12px 0 12px;padding:14px 16px;border:1px solid rgba(86,140,230,.35);border-radius:9px;background:linear-gradient(100deg,rgba(20,40,78,.82),rgba(9,18,38,.68));box-shadow:0 0 24px rgba(30,90,220,.10)}
+.hero-kicker{font:600 11px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.hero-intro h1{font:700 25px var(--disp);margin:0;letter-spacing:.01em}
+.hero-intro p{margin:4px 0 0;color:var(--mute);font-size:12.5px}
+.hero-status{display:flex;align-items:center;gap:9px;white-space:nowrap;padding:8px 11px;border:1px solid rgba(59,227,247,.3);border-radius:999px;background:rgba(59,227,247,.055);font-size:12px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.twin-head{position:absolute;left:12px;top:12px;z-index:3;pointer-events:none;padding:8px 11px;border-radius:7px;background:rgba(6,13,30,.76);border:1px solid rgba(86,140,230,.35);backdrop-filter:blur(6px)}
+.twin-head b{display:block;font:600 13px var(--disp)}
+.twin-head span{display:block;color:var(--mute);font-size:10.5px;margin-top:1px}
+.kpi{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.kpi:hover{transform:translateY(-2px);border-color:rgba(59,227,247,.55);box-shadow:inset 0 0 28px rgba(50,110,220,.10),0 0 28px rgba(30,110,240,.16)}
+.kpi .kl{line-height:1.25}
+@media(max-width:1000px){.smart-grid{grid-template-columns:repeat(2,1fr)}.smart-flow{grid-template-columns:repeat(2,1fr)}.smart-flow div+div{border-left:1px solid var(--line)}.smart-flow div:last-child{border-radius:0 0 8px 8px}}
+@media(max-width:640px){.smart-grid{grid-template-columns:1fr}.smart-flow{grid-template-columns:1fr}.smart-flow div+div{border-left:1px solid var(--line);border-top:0}.smart-flow div:first-child{border-radius:8px 8px 0 0}.smart-flow div:last-child{border-radius:0 0 8px 8px}.hero-intro{align-items:flex-start;flex-direction:column;gap:9px}.hero-intro h1{font-size:21px}.hero-status{align-self:stretch;justify-content:center}}
 /* electrical health dashboard */
 .elec-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
 .elec-meters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -254,12 +269,17 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 </header>
 
 <main>
+<div class="hero-intro">
+  <div><div class="hero-kicker">AI building control centre · simulated live view</div><h1>Sense. Predict. Optimise. Verify.</h1><p>Energy efficiency, peak-demand response and occupant comfort in one building operating layer.</p></div>
+  <div class="hero-status"><i class="live-dot"></i><span>Digital twin online · AI control active</span></div>
+</div>
 <div id="hud">
   <div class="kpis" id="kpis"></div>
   <div class="hud">
     <div class="col" id="colL"></div>
     <div class="stage">
       <div class="twin" id="twinbox">
+        <div class="twin-head"><b>Live building digital twin</b><span>Click a floor to inspect zone state · AI actions highlighted</span></div>
         <div class="vig"></div>
         <div class="zoom"><button class="btn" id="zin" aria-label="Zoom in">+</button><button class="btn" id="zout" aria-label="Zoom out">−</button></div>
         <div class="zinfo" id="zinfo"></div>
@@ -730,7 +750,7 @@ function updateSmartBuilding(s){
  '<div class="smart-card"><h3>Occupant experience</h3><div class="smart-value '+comfortCls+'">'+comfort+' / 100</div><div class="smart-sub">live comfort score</div><div class="smart-compare"><div><span class="smart-sub">Occupancy</span><b class="num">'+Math.round(s.occ)+'%</b></div><div><span class="smart-sub">Highest CO₂</span><b class="num">'+Math.max.apply(null,s.zones.map(z=>z.co2))+' ppm</b></div></div><div class="smart-sub">'+(comfort>=90?'Comfort conditions maintained':'Comfort threshold needs attention')+'</div></div>'+
  '<div class="smart-card"><h3>Grid responsiveness</h3><div class="smart-value a">'+Math.round(peakDrop)+'%</div><div class="smart-sub">peak-window grid-demand reduction</div><div class="smart-compare"><div><span class="smart-sub">Flexible now</span><b class="num">'+flexible.toFixed(0)+' kW</b></div><div><span class="smart-sub">Mode</span><b style="font-size:16px">'+(s.mode==='dr'?'Demand response':s.mode==='precool'?'Pre-cooling':'Auto')+'</b></div></div><div class="smart-sub">Pre-cooling + battery + load shifting</div></div>'+
  '<div class="smart-card"><h3>AI action now</h3><div class="smart-value v" style="font-size:23px">'+action+'</div><div class="smart-sub" style="margin-top:8px">'+detail+'</div><div class="smart-action"><b>Comfort gate:</b> control actions are allowed only while occupied-zone comfort stays within the modeled threshold.</div></div></div>'+
- '<div class="smart-flow"><div><b>1 · Sense</b><span>Energy meters, occupancy, CO₂, temperature, lighting and equipment health</span></div><div><b>2 · Predict</b><span>Load forecast + occupancy forecast + anomaly detection</span></div><div><b>3 · Optimise</b><span>HVAC, lighting, battery and flexible loads respond to tariff and occupancy</span></div><div><b>4 · Verify</b><span>kWh saved, peak reduction and comfort are measured against the baseline</span></div></div>'+
+ '<div class="smart-flow"><div style="--flow:#3be3f7"><b>1 · Detect</b><span>Meter, occupancy, CO₂, temperature & equipment signals</span></div><div style="--flow:#4f8cff"><b>2 · Predict</b><span>Load, occupancy and anomaly forecasts</span></div><div style="--flow:#a98bff"><b>3 · Decide</b><span>Tariff, peak and comfort constraints evaluated</span></div><div style="--flow:#8dff5c"><b>4 · Act</b><span>HVAC, lighting, battery & flexible loads respond</span></div><div style="--flow:#ffb627"><b>5 · Verify</b><span>Energy, peak demand & comfort checked vs baseline</span></div></div>'+
  '<p class="note">Demonstration values are simulated. The energy-saving percentage is calculated from the modeled baseline and optimised grid consumption, not from a real building meter.</p>';
 }
 
