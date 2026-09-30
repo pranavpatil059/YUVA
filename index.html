@@ -104,9 +104,9 @@ section{margin-top:44px}
 .hud{display:grid;grid-template-columns:270px minmax(0,1fr) 270px;gap:12px;align-items:stretch}
 .col{display:flex;flex-direction:column;gap:10px}
 .col .p{flex:1}
-.stage{position:relative;min-height:560px}
+.stage{position:relative;min-height:700px}
 .twin{position:absolute;inset:0;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#0b1a3a;box-shadow:0 0 34px rgba(40,100,230,.18)}
-.twin canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab;z-index:2;background:transparent}
+.twin canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 .twin canvas:active{cursor:grabbing}
 .vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,transparent 55%,rgba(3,8,20,.75) 100%)}
 .tag{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--disp);font-weight:600;font-size:13px;padding:5px 12px 6px;border-radius:5px;background:rgba(14,24,44,.92);border:1px solid rgba(190,215,255,.65);color:#fff;white-space:nowrap;transform:translate(-50%,-135%);text-align:center;line-height:1.15}
@@ -209,17 +209,6 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 .hero-intro p{margin:4px 0 0;color:var(--mute);font-size:12.5px}
 .hero-status{display:flex;align-items:center;gap:9px;white-space:nowrap;padding:8px 11px;border:1px solid rgba(59,227,247,.3);border-radius:999px;background:rgba(59,227,247,.055);font-size:12px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
-.twin-fallback{position:absolute;inset:0;z-index:1;overflow:hidden;background:radial-gradient(circle at 50% 36%,rgba(37,87,150,.48),rgba(6,16,36,.95) 66%);pointer-events:none}
-.twin-fallback .fb-sky{position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,72,126,.32),transparent 62%)}
-.fb-building{position:absolute;left:50%;top:23%;width:min(430px,62%);height:54%;transform:translateX(-50%) perspective(700px) rotateX(2deg);filter:drop-shadow(0 24px 24px rgba(0,0,0,.42))}
-.fb-floor{position:absolute;left:0;width:100%;height:18%;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px 14px;background:linear-gradient(135deg,#2b4666,#182b47);border:1px solid rgba(113,190,255,.42);box-shadow:inset 0 0 20px rgba(46,170,255,.12),0 4px 10px rgba(0,0,0,.25);transform:skewY(-3deg)}
-.fb-floor i{display:block;border:1px solid rgba(90,227,247,.4);background:linear-gradient(180deg,rgba(70,207,255,.8),rgba(16,52,91,.55));box-shadow:0 0 8px rgba(59,227,247,.2)}
-.fb-floor.f1{bottom:0}.fb-floor.f2{bottom:18.5%}.fb-floor.f3{bottom:37%}.fb-floor.f4{bottom:55.5%}.fb-floor.f5{bottom:74%}
-.fb-roof{position:absolute;top:0;left:-3%;width:106%;height:15%;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(135deg,#314967,#182b45);border:1px solid rgba(141,255,92,.42);transform:skewY(-3deg);color:#8fa6c8;font:500 10px "DM Mono",monospace}
-.fb-roof span{padding:4px 7px;border:1px solid rgba(59,227,247,.25);border-radius:4px;background:rgba(7,18,38,.55)}
-.fb-ground{position:absolute;left:15%;right:15%;bottom:12%;height:18%;background:radial-gradient(ellipse,rgba(59,227,247,.22),transparent 68%);border-bottom:1px solid rgba(59,227,247,.18)}
-.fb-label{position:absolute;padding:6px 9px;border:1px solid rgba(59,227,247,.35);border-radius:6px;background:rgba(7,17,35,.86);color:#8fa6c8;font:500 10px "DM Mono",monospace;line-height:1.3;box-shadow:0 0 16px rgba(59,227,247,.08)}
-.fb-label b{color:#e8f1ff;font-size:11px}.fb-grid{right:7%;top:40%}.fb-solar{left:7%;top:26%}.fb-hvac{right:8%;bottom:24%}
 @media(max-width:700px){.stage{min-height:500px}.fb-building{width:72%;height:50%;top:27%}.fb-label{font-size:9px}.fb-label b{font-size:10px}.fb-grid{right:3%}.fb-solar{left:3%}.fb-hvac{right:3%}}
 
 .twin-head{position:absolute;left:12px;top:12px;z-index:3;pointer-events:none;padding:8px 11px;border-radius:7px;background:rgba(6,13,30,.76);border:1px solid rgba(86,140,230,.35);backdrop-filter:blur(6px)}
@@ -314,21 +303,6 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
     <div class="col" id="colL"></div>
     <div class="stage">
       <div class="twin" id="twinbox">
-        <div class="twin-fallback" aria-hidden="true">
-  <div class="fb-sky"></div>
-  <div class="fb-building">
-    <div class="fb-floor f5"><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="fb-floor f4"><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="fb-floor f3"><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="fb-floor f2"><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="fb-floor f1"><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="fb-roof"><span>SOLAR</span><span>HVAC</span><span>BATTERY</span></div>
-  </div>
-  <div class="fb-ground"></div>
-  <div class="fb-label fb-grid">GRID<br><b>124 → 26 kW</b></div>
-  <div class="fb-label fb-solar">SOLAR<br><b>+&nbsp;RENEWABLE</b></div>
-  <div class="fb-label fb-hvac">HVAC<br><b>AI OPTIMISED</b></div>
-</div>
         <div class="twin-head"><b>Live building digital twin</b><span>Click a floor to inspect zone state · AI actions highlighted</span></div>
         <div class="vig"></div>
         <div class="zoom"><button class="btn" id="zin" aria-label="Zoom in">+</button><button class="btn" id="zout" aria-label="Zoom out">−</button></div>
@@ -941,9 +915,9 @@ function init3D(){
   box.insertBefore(renderer.domElement,box.firstChild);
   const scene=new THREE.Scene();
   scene.fog=new THREE.Fog(0x0b1a3a,30,64);
-  const camera=new THREE.PerspectiveCamera(34,1,.1,220);
+  const camera=new THREE.PerspectiveCamera(30,1,.1,220);
   const target=new THREE.Vector3(.6,2.1,.8);
-  let theta=.74,phi=1.02,radius=18,idle=0,sway=0;
+  let theta=.74,phi=1.0,radius=25,idle=0,sway=0;
   function place(){
     camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta+sway),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta+sway));
     camera.lookAt(target);
@@ -1077,6 +1051,12 @@ function init3D(){
   const pyM=MT(0x50586a,{metalness:.4});
   put(bx(.16,4,.16,pyM),11,2,-5);put(bx(1.6,.09,.09,pyM),11,3.7,-5);put(bx(1.1,.09,.09,pyM),11,3.2,-5);
   const lamp=new THREE.Mesh(new THREE.SphereGeometry(.17,16,16),new THREE.MeshBasicMaterial({color:0x888888}));put(lamp,11,4.1,-5);
+  // piezo pad
+  const padTex=tex((g,w,h)=>{g.fillStyle='#0b1220';g.fillRect(0,0,w,h);g.strokeStyle='rgba(60,190,255,.7)';g.lineWidth=2;const n=6;for(let i=0;i<=n;i++){g.beginPath();g.moveTo(i*w/n,0);g.lineTo(i*w/n,h);g.stroke();g.beginPath();g.moveTo(0,i*h/n);g.lineTo(w,i*h/n);g.stroke()}},256,256);
+  put(bx(3.4,.06,2.5,new THREE.MeshStandardMaterial({map:padTex,roughness:.3,metalness:.5})),0,.06,5.0);
+  const padGlow=put(glow('rgba(70,190,255,.9)',3.6),0,.4,5.0);
+  const ringM=new THREE.MeshBasicMaterial({color:0x66d4ff,transparent:true,opacity:.6,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+  const ring=put(new THREE.Mesh(new THREE.RingGeometry(.35,.42,40),ringM),0,.1,5.0);ring.rotation.x=-Math.PI/2;
   // trees
   const trunkM=MT(0x5a3d26),leafA=MT(0x2f9a48,{roughness:.9}),leafB=MT(0x1f7a3a,{roughness:.9});
   [[-6.6,1.0,1],[-8,-1.5,1.2],[-4.4,-4,1.1],[3,-4.3,1],[8,3.7,1.1],[10.4,1.5,1.2],[-9.2,4.2,1],[-3,3.6,.8],[5.8,4,.9],[9.2,-4.6,1.1],[-10.5,-4,1.2]].forEach((t,i)=>{
@@ -1128,7 +1108,8 @@ function init3D(){
   function tag(name,pos){const el=document.createElement('div');el.className='tag';el.innerHTML=name+'<em></em>';box.appendChild(el);labels.push({el,em:el.querySelector('em'),pos:pos.clone(),name})}
   tag('Solar Panels',new THREE.Vector3(-.4,yT+1.0,.1));
   tag('Battery',new THREE.Vector3(-5.8,1.35,2.2));
-   tag('Chiller Plant',new THREE.Vector3(-5.7,1.6,-1.5));
+  tag('Piezo Floor',new THREE.Vector3(0,.55,5));
+  tag('Chiller Plant',new THREE.Vector3(-5.7,1.6,-1.5));
   tag('Grid',new THREE.Vector3(11,4.5,-5));
 
   /* interaction */
@@ -1166,7 +1147,7 @@ function init3D(){
     const w=box.clientWidth,h=box.clientHeight;
     if(!w||!h)return;
     renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
-    radius=clamp(radius,w<520?20:18,12,24);
+    radius=Math.max(radius,w<520?30:0);
   }
   new ResizeObserver(resize).observe(box);resize();
   const cCool=new THREE.Color(0x3b82c4),cWarm=new THREE.Color(0xf2a03a),cPre=new THREE.Color(0x19c8ff),cDr=new THREE.Color(0xffb627),tmpC=new THREE.Color();
@@ -1202,6 +1183,8 @@ function init3D(){
     fans.forEach((f,i)=>{f.rotation.y+=dt*(1+s.hvac/10)*(i===1?1.25:1)});
     cts.forEach(c=>{c.scale.y=1+.03*Math.sin(time*6)});
     const foot=clamp(s.occ/100,0,1);
+    padGlow.material.opacity=.35+.65*foot*(.6+.4*Math.sin(time*3));padGlow.scale.setScalar(2.6+2.0*foot);
+    const rp=(time*.8)%1;ring.scale.setScalar(1+rp*3.2);ringM.opacity=(1-rp)*.7*foot;
     socBar.scale.x=Math.max(.02,s.socPct);socBar.position.x=-5.8-(1-Math.max(.02,s.socPct))*.75;
     lamp.material.color.set(s.cls==='peak'?0xff5a4a:s.cls==='off'?0x3fd68a:0xaab2bd);
     doorGlow.material.opacity=.3+.7*(1-dayF*.6);
@@ -1230,6 +1213,7 @@ function init3D(){
       let t='';
       if(l.name==='Solar Panels')t=s.sol.toFixed(0)+' kW';
       if(l.name==='Battery')t=Math.round(s.socPct*100)+'% charged';
+      if(l.name==='Piezo Floor')t=s.pz.toFixed(2)+' kW';
       if(l.name==='Chiller Plant')t=(s.hvac*.55).toFixed(0)+' kW';
       if(l.name==='Grid')t=s.grid.toFixed(0)+' kW';
       l.em.textContent=t;
