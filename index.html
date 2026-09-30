@@ -356,7 +356,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
       <div><span>Test MAPE</span><b class="num" style="color:var(--green)">5.5%</b></div>
       <div><span>Test MAE</span><b class="num">11.5</b></div>
     </div>
-    <div class="extra-note">Measured-data validation is separate from the simulated digital-twin controller. Dataset: BDG2 sample · source: skforecast datasets · model retrain required for deployment.</div>
+    <div class="extra-note">Measured-data validation is separate from the simulated digital-twin controller. Dataset: BDG2 sample · source: skforecast datasets · model retrain required for deployment. <a href="https://github.com/skforecast/skforecast-datasets" target="_blank" rel="noreferrer" style="color:var(--teal)">Dataset source ↗</a></div>
   </div>
 </section>
 
@@ -451,7 +451,7 @@ function model(P){
     M.curt[h]=0; M.pre[h]=0;
     const irr=Math.pow(Math.max(0,Math.sin(Math.PI*(h-6)/12)),1.25)*(0.92+0.08*Math.sin(h*1.7));
     M.sol[h]=P.solarKw*irr*0.82;
-    M.pz[h]=1.8*o;
+    M.pz[h]=0; // experimental piezo concept is not counted in core BEMS KPIs
   }
   const win=[{pk:[9,10,11],pre:[6,7,8],w:[.25,.35,.4]},{pk:[18,19,20,21],pre:[15,16,17],w:[.3,.35,.35]}];
   win.forEach(x=>{
@@ -465,7 +465,7 @@ function model(P){
   let soc=cap*.25;
   for(let d=0;d<2;d++)for(let h=0;h<24;h++){
     let p=0;const c=cls(h);
-    const net=Math.max(0,M.load[h]-M.sol[h]-M.pz[h]);
+    const net=Math.max(0,M.load[h]-M.sol[h]);
     if(c==='peak'){p=Math.max(0,Math.min(maxP,soc-minS,net))}
     else if(c==='off'){p=-Math.min(maxP,(maxS-soc)/0.95)}
     else if(h>=12&&h<15){p=-Math.min(maxP*0.6,(maxS-soc)/0.95)}
@@ -474,7 +474,7 @@ function model(P){
     if(d===1){M.bat[h]=p;M.soc[h]=soc}
   }
   for(let h=0;h<24;h++){
-    const n=M.load[h]-M.sol[h]-M.pz[h]-M.bat[h];
+    const n=M.load[h]-M.sol[h]-M.bat[h];
     M.grid[h]=Math.max(0,n);M.exp[h]=Math.max(0,-n);
   }
   const S={};
@@ -487,7 +487,7 @@ function model(P){
   S.byBase={off:0,normal:0,peak:0};S.byGrid={off:0,normal:0,peak:0};S.costBase={off:0,normal:0,peak:0};S.costGrid={off:0,normal:0,peak:0};
   for(let h=0;h<24;h++){const c=cls(h);S.byBase[c]+=M.base[h];S.byGrid[c]+=M.grid[h];S.costBase[c]+=M.base[h]*RATE[c];S.costGrid[c]+=M.grid[h]*RATE[c]}
   S.sol=sum(M.sol);S.pz=sum(M.pz);S.dis=sum(M.bat.map(v=>Math.max(0,v)));
-  S.ren=sum(M.load.map((v,h)=>Math.min(v,M.sol[h]+M.pz[h]+Math.max(0,M.bat[h]))));
+  S.ren=sum(M.load.map((v,h)=>Math.min(v,M.sol[h]+Math.max(0,M.bat[h]))));
   S.shifted=Math.max(sum(M.curt),0);
   S.peakDropPct=100*(1-S.pkGrid/S.pkBase);
   S.saveDay=S.cBase-S.cGrid;S.saveYear=S.saveDay*DAYS;
@@ -782,7 +782,7 @@ function updateSmartBuilding(s){
  const ecbcRef=150, ecbcRatio=S.intensity/ecbcRef;
  const floorScores=s.zones.map((z,i)=>({name:ZONES[i].fl,score:Math.round(clamp(70+z.lightPct*.12+(z.mode==='dr'?8:z.mode==='precool'?5:2)+(4-i),0,100))})).sort((a,b)=>b.score-a.score);
  $('smartExtras').innerHTML='<div class="smart-extras">'+
-  '<div class="smart-extra"><h3>ECBC benchmark view</h3><div class="extra-main '+(ecbcRatio<=1?'g':'a')+'">'+S.intensity.toFixed(0)+' <small>kWh/m²/yr</small></div><div class="extra-pair"><div><span>Reference</span><b>150 kWh/m²/yr</b></div><div><span>EPI ratio</span><b class="num">'+ecbcRatio.toFixed(2)+'×</b></div></div><div class="extra-note">'+(ecbcRatio<=1?'Below the reference benchmark':'Above the reference benchmark')+' · formal ECBC whole-building compliance uses a project-specific Standard Building EPI.</div></div>'+
+  '<div class="smart-extra"><h3>ECBC benchmark view</h3><div class="extra-main '+(ecbcRatio<=1?'g':'a')+'">'+S.intensity.toFixed(0)+' <small>kWh/m²/yr</small></div><div class="extra-pair"><div><span>Reference</span><b>150 kWh/m²/yr</b></div><div><span>EPI ratio</span><b class="num">'+ecbcRatio.toFixed(2)+'×</b></div></div><div class="extra-note">'+(ecbcRatio<=1?'Below the reference benchmark':'Above the reference benchmark')+' · formal ECBC whole-building compliance uses a project-specific Standard Building EPI. <a href="https://www.beeindia.gov.in/show_content.php?lang=1&level=2&lid=327&ls_id=201" target="_blank" rel="noreferrer" style="color:var(--teal)">BEE / ECBC ↗</a></div></div>'+
   '<div class="smart-extra"><h3>Demand-charge driver</h3><div class="extra-main a">'+Math.round(S.pkBase-S.pkGrid)+' kW</div><div class="extra-pair"><div><span>Before</span><b class="num">'+Math.round(S.pkBase)+' kW</b></div><div><span>After</span><b class="num" style="color:var(--green)">'+Math.round(S.pkGrid)+' kW</b></div></div><div class="extra-note">Max grid import during the modeled peak windows · demand-charge exposure metric.</div></div>'+
   '<div class="smart-extra"><h3>Tenant engagement</h3>'+floorScores.slice(0,3).map((f,i)=>'<div class="rank-row"><b>#'+(i+1)+' '+f.name+'</b><div class="rank-bar"><i style="width:'+f.score+'%"></i></div><span class="score">'+f.score+'</span></div>').join('')+'<div class="extra-note">Simulated floor challenge score from occupancy-aware control, lighting response and peak participation.</div></div>'+
   '<div class="smart-extra"><h3>Experimental innovation</h3><div class="extra-main v">Piezo layer</div><div class="extra-note">Optional floor-energy harvesting / sensing concept. Kept outside the core savings KPI so the BEMS story stays focused on HVAC, lighting, storage and grid response.</div></div>'+
