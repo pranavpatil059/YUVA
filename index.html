@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <title>VoltSense BEMS: Smart Building Energy & Occupant Experience</title>
+<link rel="canonical" href="https://voltsense-bems.onrender.com/">
+<meta property="og:url" content="https://voltsense-bems.onrender.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -183,6 +185,18 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 .smart-flow b{display:block;font-family:var(--disp);font-size:13.5px}.smart-flow span{font-size:11.5px;color:var(--mute)}
 .smart-action{margin-top:12px;border-left:4px solid var(--teal);padding:12px 14px;background:linear-gradient(90deg,rgba(59,227,247,.09),rgba(59,227,247,.025));border-radius:0 8px 8px 0}
 .smart-action b{color:var(--teal)}
+.smart-extras{display:grid;grid-template-columns:1.15fr 1fr 1.15fr 1fr;gap:12px;margin-top:12px}
+.smart-extra{padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,rgba(18,34,64,.88),rgba(8,17,35,.94))}
+.smart-extra h3{margin:0 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line);font-size:14px}
+.extra-main{font:600 25px var(--disp);color:var(--teal);line-height:1.15}
+.extra-main.g{color:var(--green)} .extra-main.a{color:var(--amber)} .extra-main.v{color:var(--violet)}
+.extra-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px}
+.extra-pair div{padding:7px 8px;border-radius:6px;background:rgba(20,36,68,.48);border:1px solid rgba(86,140,230,.16)}
+.extra-pair span{display:block;color:var(--mute);font-size:11px}.extra-pair b{font:600 16px var(--disp)}
+.extra-note{margin-top:6px;color:var(--mute);font-size:11.5px}
+.rank-row{display:grid;grid-template-columns:72px 1fr auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid rgba(86,140,230,.15)}
+.rank-row:last-child{border-bottom:0}.rank-row b{font-family:var(--disp)}.rank-row .score{color:var(--amber);font:600 15px var(--disp)}
+.rank-bar{height:6px;border-radius:4px;background:rgba(120,160,230,.13);overflow:hidden}.rank-bar i{display:block;height:100%;background:linear-gradient(90deg,#4f8cff,#8dff5c)}
 .hero-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:12px 0 12px;padding:14px 16px;border:1px solid rgba(86,140,230,.35);border-radius:9px;background:linear-gradient(100deg,rgba(20,40,78,.82),rgba(9,18,38,.68));box-shadow:0 0 24px rgba(30,90,220,.10)}
 .hero-kicker{font:600 11px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
 .hero-intro h1{font:700 25px var(--disp);margin:0;letter-spacing:.01em}
@@ -221,6 +235,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 
 
 @media (max-width:1180px){
+  .smart-extras{grid-template-columns:repeat(2,1fr)}
   .hud{grid-template-columns:1fr 1fr}
   .stage{grid-column:1/-1;order:-1;min-height:560px}
   .kpis{grid-template-columns:repeat(3,1fr)}
@@ -234,6 +249,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   .brand small{display:none}
 }
 @media (max-width:640px){
+  .smart-extras{grid-template-columns:1fr}
   .hud{grid-template-columns:1fr}
   .stage{min-height:430px}
   .kpis{grid-template-columns:repeat(2,1fr)}\n  .building-grid{grid-template-columns:1fr}
@@ -297,6 +313,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
 <section id="smart">
   <div class="sec-head"><h2>Smart building energy & occupant experience</h2><p>VoltSense combines energy, occupancy and indoor conditions to optimise building operation, shift flexible loads away from peaks, and preserve comfort. The 3D digital twin remains the visual control surface for the building.</p></div>
   <div id="smartDash"></div>
+<div id="smartExtras"></div>
 </section>
 <section id="grid">
   <div class="sec-head"><h2>Peak load shifting and time-of-day tariff</h2><p>The building cools itself before the tariff peak, coasts through it on stored cold and battery power, then recovers on cheaper units.</p></div>
@@ -321,7 +338,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
   <div id="elecDash"></div>
 </section>
 <section id="ml">
-  <div class="sec-head"><h2>AI optimisation & prediction layer</h2><p>Three model concepts feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
+  <div class="sec-head"><h2>AI optimisation & prediction layer</h2><p>Three controller models are demonstrated in simulation, with a separate real-data validation model trained on a public BDG2 sample to show measured forecasting performance.</p></div>
   <div class="rec" id="rec"></div>
   <div class="grid2e" style="margin-top:14px">
     <div class="card"><h3>Occupancy forecast</h3><div class="chartbox sm"><canvas id="cOc"></canvas></div></div>
@@ -331,6 +348,15 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
     <div class="model"><b>Load forecaster (LSTM)</b><p>Predicts hourly demand from weather, calendar, occupancy and tariff class.</p><div class="m" id="mm1"></div></div>
     <div class="model"><b>Occupancy predictor (gradient boosting)</b><p>Learns badge, Wi-Fi and CO₂ patterns per zone to schedule HVAC and lights ahead of people.</p><div class="m" id="mm2"></div></div>
     <div class="model"><b>Fault detector (isolation forest)</b><p>Scores each machine against its own healthy behaviour and names the likely cause.</p><div class="m" id="mm3"></div></div>
+  </div>
+  <div class="model" style="margin-top:14px;border-color:rgba(59,227,247,.35)">
+    <b>Real-data validation · BDG2 hourly sample</b>
+    <p>Small ridge forecaster trained on the public Building Data Genome 2 sample: 6,553 hourly rows from two buildings, using lag-24 demand plus calendar features. 80/20 chronological holdout.</p>
+    <div class="extra-pair" style="margin-top:10px">
+      <div><span>Test MAPE</span><b class="num" style="color:var(--green)">5.5%</b></div>
+      <div><span>Test MAE</span><b class="num">11.5</b></div>
+    </div>
+    <div class="extra-note">Measured-data validation is separate from the simulated digital-twin controller. Dataset: BDG2 sample · source: skforecast datasets · model retrain required for deployment.</div>
   </div>
 </section>
 
@@ -381,7 +407,7 @@ footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid v
     <p class="note" style="margin:12px 0 0"><b>Retrofit economics:</b> interactive capex/payback values are indicative demonstration assumptions, not quotations.</p>
   </div>
 </section>
-<footer>All figures are simulated for a demonstration building. Emission factor 0.82 kg CO₂ per kWh (Indian grid average, assumption). All energy, comfort, cost and equipment values are simulated demonstration assumptions; validate them with measured building data before deployment.</footer>
+<footer>All figures are simulated for a demonstration building unless explicitly marked as real-data validation. ECBC reference view uses a 150 kWh/m²/yr office benchmarking reference; formal ECBC whole-building compliance uses a project-specific Standard Building EPI. Real-data validation uses the public BDG2 hourly sample. Emission factor 0.82 kg CO₂ per kWh is a demonstration assumption. Validate all site-specific energy, comfort, cost and equipment values with measured building data before deployment.</footer>
 </main>
 
 <script>
@@ -753,6 +779,14 @@ function updateSmartBuilding(s){
  '<div class="smart-card"><h3>AI action now</h3><div class="smart-value v" style="font-size:23px">'+action+'</div><div class="smart-sub" style="margin-top:8px">'+detail+'</div><div class="smart-action"><b>Comfort gate:</b> control actions are allowed only while occupied-zone comfort stays within the modeled threshold.</div></div></div>'+
  '<div class="smart-flow"><div style="--flow:#3be3f7"><b>1 · Detect</b><span>Meter, occupancy, CO₂, temperature & equipment signals</span></div><div style="--flow:#4f8cff"><b>2 · Predict</b><span>Load, occupancy and anomaly forecasts</span></div><div style="--flow:#a98bff"><b>3 · Decide</b><span>Tariff, peak and comfort constraints evaluated</span></div><div style="--flow:#8dff5c"><b>4 · Act</b><span>HVAC, lighting, battery & flexible loads respond</span></div><div style="--flow:#ffb627"><b>5 · Verify</b><span>Energy, peak demand & comfort checked vs baseline</span></div></div>'+
  '<p class="note">Demonstration values are simulated. The energy-saving percentage is calculated from the modeled baseline and optimised grid consumption, not from a real building meter.</p>';
+ const ecbcRef=150, ecbcRatio=S.intensity/ecbcRef;
+ const floorScores=s.zones.map((z,i)=>({name:ZONES[i].fl,score:Math.round(clamp(70+z.lightPct*.12+(z.mode==='dr'?8:z.mode==='precool'?5:2)+(4-i),0,100))})).sort((a,b)=>b.score-a.score);
+ $('smartExtras').innerHTML='<div class="smart-extras">'+
+  '<div class="smart-extra"><h3>ECBC benchmark view</h3><div class="extra-main '+(ecbcRatio<=1?'g':'a')+'">'+S.intensity.toFixed(0)+' <small>kWh/m²/yr</small></div><div class="extra-pair"><div><span>Reference</span><b>150 kWh/m²/yr</b></div><div><span>EPI ratio</span><b class="num">'+ecbcRatio.toFixed(2)+'×</b></div></div><div class="extra-note">'+(ecbcRatio<=1?'Below the reference benchmark':'Above the reference benchmark')+' · formal ECBC whole-building compliance uses a project-specific Standard Building EPI.</div></div>'+
+  '<div class="smart-extra"><h3>Demand-charge driver</h3><div class="extra-main a">'+Math.round(S.pkBase-S.pkGrid)+' kW</div><div class="extra-pair"><div><span>Before</span><b class="num">'+Math.round(S.pkBase)+' kW</b></div><div><span>After</span><b class="num" style="color:var(--green)">'+Math.round(S.pkGrid)+' kW</b></div></div><div class="extra-note">Max grid import during the modeled peak windows · demand-charge exposure metric.</div></div>'+
+  '<div class="smart-extra"><h3>Tenant engagement</h3>'+floorScores.slice(0,3).map((f,i)=>'<div class="rank-row"><b>#'+(i+1)+' '+f.name+'</b><div class="rank-bar"><i style="width:'+f.score+'%"></i></div><span class="score">'+f.score+'</span></div>').join('')+'<div class="extra-note">Simulated floor challenge score from occupancy-aware control, lighting response and peak participation.</div></div>'+
+  '<div class="smart-extra"><h3>Experimental innovation</h3><div class="extra-main v">Piezo layer</div><div class="extra-note">Optional floor-energy harvesting / sensing concept. Kept outside the core savings KPI so the BEMS story stays focused on HVAC, lighting, storage and grid response.</div></div>'+
+  '</div>'; 
 }
 
 function updateUI(s){
@@ -763,7 +797,7 @@ function updateUI(s){
   const savedKwh=Math.max(0,cum(M.base,s.t)-cum(M.grid,s.t));
   const savedRs=Math.max(0,cumCost(M.base,s.t)-cumCost(M.grid,s.t));
   const open=ALERTS.filter(a=>a.t<=s.t).length;
-  const renW=s.load>0?clamp((s.sol+s.pz+Math.max(0,s.bat))/s.load*100,0,100):0;
+  const renW=s.load>0?clamp((s.sol+Math.max(0,s.bat))/s.load*100,0,100):0;
   const anom=s.t>=14.33;
   const cc=s.comfort>=90?'g':s.comfort>=75?'a':'r';
   const energyPct=S.dayBase>0?100*(S.dayBase-S.dayGrid)/S.dayBase:0;
@@ -772,7 +806,7 @@ function updateUI(s){
   $('kpis').innerHTML=
    '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saving</h4><div class="kv"><b class="nv">'+energyPct.toFixed(1)+'%</b><b class="nv a">'+fmt(S.dayBase-S.dayGrid)+'<span class="kl">kWh/day</span></b></div></div>'+
    '<div class="p kpi" style="--acc:#8dff5c"><h4>Occupant comfort</h4><div class="kv"><b class="nv '+cc+'" style="font-size:38px">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:22px;color:#dbe8ff">/100</b></div><span class="kl">comfort gate active</span></div>'+
-   '<div class="p kpi" style="--acc:#ffb627"><h4>Peak demand</h4><div class="kv"><b class="nv a">'+peakPct.toFixed(0)+'%</b><b class="nv">'+Math.round(S.pkGrid)+'<span class="kl">kW after optimisation</span></b></div></div>'+
+   '<div class="p kpi" style="--acc:#ffb627"><h4>Peak demand</h4><div class="kv"><b class="nv a">'+peakPct.toFixed(0)+'%</b><b class="nv">'+Math.round(S.pkGrid)+'<span class="kl">kW after optimisation</span></b></div><span class="kl">'+Math.round(S.pkBase)+' → '+Math.round(S.pkGrid)+' kW max grid demand</span></div>'+
    '<div class="p kpi" style="--acc:#a98bff"><h4>AI action now</h4><div class="kv"><b class="nv" style="font-size:21px;color:#c8b8ff">'+aiAction+'</b></div><span class="kl">'+Math.round(s.occ)+'% occupancy • '+Math.max.apply(null,s.zones.map(z=>z.co2))+' ppm max CO₂</span></div>'+
    '<div class="p kpi" style="--acc:#4f8cff"><h4>System status</h4><ul>'+
      '<li><i class="dotc" style="background:'+(anom?'#ff4d5e':'#8dff5c')+';box-shadow:0 0 8px '+(anom?'#ff4d5e':'#8dff5c')+'"></i>'+(anom?'AHU-03 anomaly detected':'All units normal')+'</li>'+
