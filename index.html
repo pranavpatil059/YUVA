@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>VoltSense BEMS: Smart Building Digital Twin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme:dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#050b18; --panel:rgba(13,25,48,.92); --panel2:rgba(20,36,68,.7); --ink:#e8f1ff; --mute:#8fa6c8; --line:rgba(86,140,230,.30);
+  --teal:#3be3f7; --green:#8dff5c; --amber:#ffb627; --orange:#ff6a3d; --red:#ff4d5e; --blue:#4f8cff; --violet:#a98bff;
+  --disp:"Exo 2","Schibsted Grotesk",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 118px);scroll-behavior:smooth}
+body{margin:0;min-height:100%;color:var(--ink);font-family:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14.5px;line-height:1.45;
+  background:
+   linear-gradient(rgba(90,140,230,.045) 1px,transparent 1px) 0 0/44px 44px,
+   linear-gradient(90deg,rgba(90,140,230,.045) 1px,transparent 1px) 0 0/44px 44px,
+   radial-gradient(1300px 780px at 50% 18%,#10275a 0%,#07122b 55%,#040915 100%);
+  background-color:var(--bg);background-attachment:fixed}
+.mono,.num{font-family:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+small{font-size:.62em;font-weight:500;color:var(--mute);margin-left:3px}
+
+/* command rail */
+.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(6,13,30,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+.rail-in{max-width:1500px;margin:0 auto;padding:9px 20px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#1aa3c4,#3b6bff);color:#fff;display:grid;place-items:center;font-family:var(--disp);font-weight:700;box-shadow:0 0 16px rgba(59,227,247,.45)}
+.brand b{display:block;line-height:1.1;font-size:17px;font-family:var(--disp);letter-spacing:.01em}
+.brand small{margin:0;display:block;color:var(--mute);font-size:12px}
+.scrub{min-width:0}
+.scrub-top{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--mute);margin-bottom:4px;gap:10px}
+.scrub-top .clk{font-size:20px;color:var(--teal);font-weight:500;text-shadow:0 0 10px rgba(59,227,247,.6)}
+.track{position:relative;height:24px;border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.segs{display:grid;grid-template-columns:repeat(24,1fr);height:100%}
+.segs i{display:block;border-right:1px solid rgba(0,0,0,.25)}
+.segs i.off{background:#1f6b47} .segs i.normal{background:#22324b} .segs i.peak{background:#a63a48}
+.segs i.pre{background-image:repeating-linear-gradient(45deg,rgba(90,170,255,.85) 0 3px,transparent 3px 7px)}
+.track input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
+.needle{position:absolute;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 10px #fff;pointer-events:none;transform:translateX(-1px)}
+.ticks{display:grid;grid-template-columns:repeat(8,1fr);font-size:10.5px;color:var(--mute);margin-top:2px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--mute);margin-top:2px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.ctrl{display:flex;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:rgba(20,36,68,.8);border-radius:6px;padding:6px 12px;font-size:13px;min-height:34px;color:var(--ink)}
+.btn:hover{border-color:var(--teal);box-shadow:0 0 10px rgba(59,227,247,.25)}
+.btn.on{background:linear-gradient(135deg,#1aa3c4,#3b6bff);border-color:transparent;color:#fff}
+select.btn{padding-right:6px}
+select.btn option{background:#0d1930}
+.subnav{max-width:1500px;margin:0 auto;padding:0 20px 8px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.subnav a{color:var(--mute);text-decoration:none;font-size:13px;padding:4px 11px;border-radius:999px;white-space:nowrap}
+.subnav a:hover{background:rgba(59,227,247,.12);color:var(--ink)}
+
+main{max-width:1500px;margin:0 auto;padding:16px 20px 60px}
+h2{font-family:var(--disp);font-size:24px;margin:0 0 4px;letter-spacing:.01em}
+h3{font-family:var(--disp);font-size:15.5px;margin:0 0 8px;font-weight:600}
+section{margin-top:44px}
+.sec-head{margin-bottom:14px}
+.sec-head p{margin:0;color:var(--mute);max-width:75ch}
+
+/* neon panels */
+.p,.card{position:relative;background:linear-gradient(180deg,rgba(21,38,72,.93),rgba(9,18,38,.95));border:1px solid var(--line);border-radius:8px;padding:12px 14px;box-shadow:inset 0 0 26px rgba(50,110,220,.07),0 0 22px rgba(30,90,220,.10)}
+.p::after{content:"";position:absolute;left:6%;right:6%;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--acc,var(--teal)),transparent);box-shadow:0 0 12px var(--acc,var(--teal))}
+.p h3{display:flex;align-items:center;gap:8px;padding-bottom:7px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.ic{width:18px;height:18px;flex:none;color:var(--acc,var(--teal))}
+.r2{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 0}
+.r2 span{color:#c6d6f0;font-size:13.5px}
+.nv{font-family:var(--disp);font-weight:600;font-size:25px;line-height:1.1;color:var(--teal);text-shadow:0 0 12px currentColor;white-space:nowrap}
+.nv.sm{font-size:19px}
+.nv.g{color:var(--green)} .nv.a{color:var(--amber)} .nv.o{color:var(--orange)} .nv.r{color:var(--red)} .nv.b{color:var(--blue)} .nv.w{color:#fff;text-shadow:none}
+.seg{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin:4px 0 8px}
+.seg i{height:7px;border-radius:2px;background:rgba(120,160,230,.18)}
+.seg i.on{background:linear-gradient(90deg,#57f07a,#3bb7ff);box-shadow:0 0 6px rgba(87,240,122,.5)}
+.bar{height:7px;border-radius:4px;background:rgba(120,160,230,.16);overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#ffb627,#ffe27a)}
+.barrow{display:flex;align-items:center;gap:10px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px}
+.kpi{text-align:center;padding:10px 12px 12px}
+.kpi h4{margin:0 0 6px;font-family:var(--disp);font-weight:600;font-size:14.5px;padding-bottom:6px;border-bottom:1px solid var(--line);color:#f2f7ff}
+.kpi .kv{display:flex;justify-content:center;align-items:baseline;gap:14px;flex-wrap:wrap}
+.kpi .nv{font-size:34px}
+.kpi .kl{display:block;font-size:11.5px;color:var(--mute);font-weight:400;text-shadow:none;font-family:"Schibsted Grotesk",sans-serif}
+.kpi ul{list-style:none;margin:2px 0 0;padding:0;text-align:left;font-size:13.5px}
+.kpi li{display:flex;align-items:center;gap:8px;padding:5px 0;font-weight:600}
+.kpi li .dotc{width:9px;height:9px;border-radius:50%;flex:none}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;border:1px solid var(--line);background:rgba(20,36,68,.7);white-space:nowrap}
+.chip.off,.chip.ok{color:var(--green);border-color:var(--green)} .chip.normal{color:var(--mute)} .chip.peak,.chip.bad{color:var(--red);border-color:var(--red)} .chip.warn{color:var(--amber);border-color:var(--amber)}
+
+/* hud */
+.hud{display:grid;grid-template-columns:270px minmax(0,1fr) 270px;gap:12px;align-items:stretch}
+.col{display:flex;flex-direction:column;gap:10px}
+.col .p{flex:1}
+.stage{position:relative;min-height:700px}
+.twin{position:absolute;inset:0;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#0b1a3a;box-shadow:0 0 34px rgba(40,100,230,.18)}
+.twin canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.twin canvas:active{cursor:grabbing}
+.vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,transparent 55%,rgba(3,8,20,.75) 100%)}
+.tag{position:absolute;left:0;top:0;pointer-events:none;font-family:var(--disp);font-weight:600;font-size:13px;padding:5px 12px 6px;border-radius:5px;background:rgba(14,24,44,.92);border:1px solid rgba(190,215,255,.65);color:#fff;white-space:nowrap;transform:translate(-50%,-135%);text-align:center;line-height:1.15}
+.tag em{display:block;font-style:normal;font-family:"DM Mono",monospace;font-weight:400;font-size:11px;color:var(--teal)}
+.tag::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:16px;background:rgba(190,215,255,.75)}
+.zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}
+.zoom .btn{width:34px;padding:0;text-align:center}
+.hint{position:absolute;left:10px;bottom:10px;font-size:12px;background:rgba(6,13,30,.8);border:1px solid var(--line);color:var(--mute);padding:4px 10px;border-radius:999px}
+.zinfo{position:absolute;left:10px;top:10px;max-width:250px;background:rgba(9,18,38,.95);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;display:none}
+.zinfo h4{margin:0 0 4px;font-size:14px;font-family:var(--disp)}
+.zinfo table{width:100%;border-collapse:collapse}
+.zinfo td{padding:1px 0;border:0}.zinfo td:last-child{text-align:right}
+.charts2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.chartbox{position:relative;height:250px}
+.chartbox.sm{height:260px}
+
+/* detail sections */
+.grid2e{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(86,140,230,.18);white-space:nowrap}
+th{font-weight:600;color:var(--mute);font-size:12.5px}
+td.r,th.r{text-align:right}
+.scroll{overflow-x:auto}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.step{background:rgba(20,36,68,.55);border:1px solid var(--line);border-radius:6px;padding:12px}
+.step b{display:block;margin-bottom:2px;font-family:var(--disp)}
+.step p{margin:0;color:#b9cbe6;font-size:13px}
+.zone{padding:12px;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,rgba(21,38,72,.9),rgba(9,18,38,.95))}
+.zone .zt{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+.zone .zs{font-size:28px;font-family:var(--disp);font-weight:600;color:var(--green);text-shadow:0 0 10px currentColor}
+.zone dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:8px 0 0;font-size:12.5px}
+.zone dt{color:var(--mute)} .zone dd{margin:0;text-align:right}
+.zones{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.log{max-height:330px;overflow:auto;font-size:13.5px}
+.log li{list-style:none;padding:8px 0;border-bottom:1px solid rgba(86,140,230,.18);display:grid;grid-template-columns:52px 1fr;gap:10px}
+.log ul{margin:0;padding:0}
+.log .tm{color:var(--mute);font-size:12.5px}
+.tagpill{font-size:11px;padding:0 7px;border-radius:999px;border:1px solid currentColor;margin-left:6px;vertical-align:1px}
+.tagpill.auto{color:var(--teal)} .tagpill.manual{color:var(--amber)} .tagpill.ai{color:var(--violet)}
+.feat{display:grid;grid-template-columns:130px 1fr 38px;gap:8px;align-items:center;font-size:13px;margin:8px 0}
+.model{border:1px solid var(--line);border-radius:8px;padding:12px;background:rgba(20,36,68,.55)}
+.model b{display:block;font-family:var(--disp)}
+.model p{margin:3px 0 0;color:#b9cbe6;font-size:13px}
+.model .m{margin-top:8px;font-size:13px}
+.rec{border-left:4px solid var(--violet);background:rgba(20,36,68,.7);border-radius:0 8px 8px 0;padding:14px 16px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sl{display:grid;grid-template-columns:150px 1fr 74px;gap:10px;align-items:center;margin:10px 0;font-size:13.5px}
+.sl input{width:100%;accent-color:var(--teal)}
+.stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(86,140,230,.18);gap:10px}
+.stat:last-child{border:0}
+.stat span:first-child{color:var(--mute)}
+.arch{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:12px}
+.arch div{border:1px solid var(--line);padding:12px;background:rgba(20,36,68,.55);position:relative}
+.arch div+div{border-left:0}
+.arch div:first-child{border-radius:8px 0 0 8px}.arch div:last-child{border-radius:0 8px 8px 0}
+.arch b{display:block;font-size:14px;font-family:var(--disp)}.arch span{font-size:12.5px;color:var(--mute)}
+.note{font-size:12.5px;color:var(--mute);margin-top:10px}
+footer{margin-top:50px;color:var(--mute);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+
+@media (max-width:1180px){
+  .hud{grid-template-columns:1fr 1fr}
+  .stage{grid-column:1/-1;order:-1;min-height:560px}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .grid2,.grid2e,.grid3,.charts2{grid-template-columns:1fr}
+  .zones{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr}
+  .arch{grid-template-columns:1fr}
+  .arch div+div{border-left:1px solid var(--line);border-top:0}
+  .arch div:first-child{border-radius:8px 8px 0 0}.arch div:last-child{border-radius:0 0 8px 8px}
+  .rail-in{grid-template-columns:1fr;gap:8px}
+  .brand small{display:none}
+}
+@media (max-width:640px){
+  .hud{grid-template-columns:1fr}
+  .stage{min-height:430px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi .nv{font-size:26px}
+  .sl{grid-template-columns:1fr 60px} .sl label{grid-column:1/-1}
+  .zones{grid-template-columns:1fr}
+  main{padding:12px 12px 50px}
+  .rail-in{padding:8px 12px}
+  .tag{font-size:11px;padding:3px 8px 4px}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="rail">
+  <div class="rail-in">
+    <div class="brand"><div class="logo">V</div><div><b>VoltSense BEMS</b><small>Tower A digital twin, simulation mode</small></div></div>
+    <div class="scrub">
+      <div class="scrub-top"><span>Simulated day: drag to travel through time</span><span class="clk num" id="clk">00:00</span></div>
+      <div class="track" id="track">
+        <div class="segs" id="segs"></div>
+        <div class="needle" id="needle"></div>
+        <input type="range" id="tslider" min="0" max="23.99" step="0.02" value="7" aria-label="Simulated time of day">
+      </div>
+      <div class="legend"><span style="--c:#1f6b47">Off-peak ₹5.5</span><span style="--c:#22324b">Normal ₹7.8</span><span style="--c:#a63a48">Peak ₹11.2</span><span style="--c:repeating-linear-gradient(45deg,#5aaaff 0 2px,#22324b 2px 4px)">Pre-cooling window</span></div>
+    </div>
+    <div class="ctrl">
+      <button class="btn on" id="play" aria-label="Play or pause">Pause</button>
+      <select class="btn" id="speed" aria-label="Simulation speed"><option value="1">1x</option><option value="3" selected>3x</option><option value="10">10x</option></select>
+    </div>
+  </div>
+  <nav class="subnav"><a href="#hud">Command center</a><a href="#grid">Peak shifting and TOD</a><a href="#hvac">HVAC and comfort</a><a href="#ml">ML models</a><a href="#finance">Savings and carbon</a></nav>
+</header>
+
+<main>
+<div id="hud">
+  <div class="kpis" id="kpis"></div>
+  <div class="hud">
+    <div class="col" id="colL"></div>
+    <div class="stage">
+      <div class="twin" id="twinbox">
+        <div class="vig"></div>
+        <div class="zoom"><button class="btn" id="zin" aria-label="Zoom in">+</button><button class="btn" id="zout" aria-label="Zoom out">−</button></div>
+        <div class="zinfo" id="zinfo"></div>
+        <div class="hint">Drag to rotate, tap a floor for its zone data</div>
+      </div>
+    </div>
+    <div class="col" id="colR"></div>
+  </div>
+  <div class="charts2">
+    <div class="p" style="--acc:#4f8cff"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg>Load shifting</h3><div class="chartbox"><canvas id="cLoad"></canvas></div></div>
+    <div class="p" style="--acc:#ffb627"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Energy forecast</h3><div class="chartbox"><canvas id="cFc"></canvas></div></div>
+  </div>
+</div>
+
+<section id="grid">
+  <div class="sec-head"><h2>Peak load shifting and time-of-day tariff</h2><p>The building cools itself before the tariff peak, coasts through it on stored cold and battery power, then recovers on cheaper units.</p></div>
+  <div class="card"><div class="steps" id="steps" style="margin-top:0"></div></div>
+  <div class="grid2e" style="margin-top:14px">
+    <div class="card"><h3>Energy drawn from the grid by tariff band</h3><div class="chartbox sm"><canvas id="cTod"></canvas></div><div class="scroll"><table id="todTable"></table></div></div>
+    <div class="card"><h3>Where the power comes from</h3><div class="chartbox sm"><canvas id="cMix"></canvas></div><p class="note" id="mixNote"></p></div>
+  </div>
+</section>
+
+<section id="hvac">
+  <div class="sec-head"><h2>HVAC, equipment health and comfort</h2><p>HVAC is the biggest controllable load. Each machine is tracked against its own baseline, and every automatic action is logged so an operator can trust it or override it.</p></div>
+  <div class="zones" id="zones"></div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="card"><h3>HVAC plant</h3><div class="scroll"><table id="eq"></table></div></div>
+    <div class="card"><h3>Control actions and alerts</h3><div class="log" id="log"></div></div>
+  </div>
+</section>
+
+<section id="ml">
+  <div class="sec-head"><h2>Machine learning layer</h2><p>Three models feed the controller. Charts are simulated model output, shaped like what the deployed models would produce from meter, weather and occupancy data.</p></div>
+  <div class="rec" id="rec"></div>
+  <div class="grid2e" style="margin-top:14px">
+    <div class="card"><h3>Occupancy forecast</h3><div class="chartbox sm"><canvas id="cOc"></canvas></div></div>
+    <div class="card"><h3>What drives tomorrow's peak-window demand</h3><div id="feat"></div></div>
+  </div>
+  <div class="grid3" style="margin-top:14px">
+    <div class="model"><b>Load forecaster (LSTM)</b><p>Predicts hourly demand from weather, calendar, occupancy and tariff class.</p><div class="m" id="mm1"></div></div>
+    <div class="model"><b>Occupancy predictor (gradient boosting)</b><p>Learns badge, Wi-Fi and CO₂ patterns per zone to schedule HVAC and lights ahead of people.</p><div class="m" id="mm2"></div></div>
+    <div class="model"><b>Fault detector (isolation forest)</b><p>Scores each machine against its own healthy behaviour and names the likely cause.</p><div class="m" id="mm3"></div></div>
+  </div>
+</section>
+
+<section id="finance">
+  <div class="sec-head"><h2>Savings, payback and carbon</h2><p>Change the design and see the business case move. Costs are typical Indian commercial rates, editable in the code.</p></div>
+  <div class="grid2e">
+    <div class="card">
+      <h3>What-if design</h3>
+      <div class="sl"><label for="sSolar">Rooftop solar</label><input type="range" id="sSolar" min="0" max="150" step="5"><span class="num" id="vSolar"></span></div>
+      <div class="sl"><label for="sBat">Battery storage</label><input type="range" id="sBat" min="0" max="300" step="10"><span class="num" id="vBat"></span></div>
+      <div class="sl"><label for="sCur">HVAC cut in peak hours</label><input type="range" id="sCur" min="0" max="50" step="5"><span class="num" id="vCur"></span></div>
+      <div class="sl"><label for="sSet">Setpoint raise</label><input type="range" id="sSet" min="0" max="3" step="0.5"><span class="num" id="vSet"></span></div>
+      <button class="btn" id="reset">Reset to proposed design</button>
+      <p class="note">Each 1°C setpoint raise cuts HVAC energy by about 6%. Cutting HVAC in peak hours is only comfortable because the building was pre-cooled first.</p>
+    </div>
+    <div class="card" id="fin"></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Deployable architecture</h3>
+    <p class="note" style="margin-top:0">Runs on existing buildings with open protocols, so a second tower is a configuration change, not a rebuild.</p>
+    <div class="arch">
+      <div><b>Sensors and meters</b><span>Occupancy, CO₂, lux, temperature, sub-meters, inverter</span></div>
+      <div><b>Edge gateway</b><span>BACnet, Modbus to MQTT. Real-time control stays on site</span></div>
+      <div><b>Cloud data layer</b><span>Time-series store with tariff and weather feeds</span></div>
+      <div><b>ML services</b><span>Forecast, occupancy, fault detection, pre-cool optimiser</span></div>
+      <div><b>This dashboard</b><span>Operators, occupants and grid demand-response signals</span></div>
+    </div>
+  </div>
+</section>
+<footer>All figures are simulated for a demonstration building. Emission factor 0.82 kg CO₂ per kWh (Indian grid average, assumption). Piezoelectric output is a small assumed value and is shown mainly as a demonstrator.</footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const fmt=n=>Math.round(n).toLocaleString('en-IN');
+const inr=n=>'₹'+fmt(n);
+const inrL=n=>n>=1e7?'₹'+(n/1e7).toFixed(2)+' Cr':n>=1e5?'₹'+(n/1e5).toFixed(1)+' lakh':inr(n);
+const pad=n=>String(n).padStart(2,'0');
+const hhmm=t=>pad(Math.floor(t))+':'+pad(Math.floor((t%1)*60));
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+/* ---------- data model ---------- */
+const OCC=[2,2,2,2,2,3,5,12,45,85,95,92,70,88,95,90,80,55,25,12,6,4,3,2];
+const OUT=[24,23.5,23,22.5,22,22,23,25,28,31,34,36,37.5,38.5,38,37,35,33,30,28,27,26,25,24.5];
+const isPeak=h=>(h>=9&&h<12)||(h>=18&&h<22);
+const cls=h=>isPeak(h)?'peak':(h>=22||h<6)?'off':'normal';
+const PRE=h=>(h>=6&&h<9)||(h>=15&&h<18);
+const RATE={off:5.5,normal:7.8,peak:11.2};
+const CLSLABEL={off:'Off-peak',normal:'Normal',peak:'Peak'};
+const P0={solarKw:80,batKwh:150,curtail:30,setOff:2};
+let P=Object.assign({},P0);
+const CO2F=0.82, DAYS=330;
+const lerpArr=(a,t)=>{const i=Math.floor(t)%24,j=(i+1)%24,f=t-Math.floor(t);return a[i]*(1-f)+a[j]*f};
+const cum=(a,t)=>{let s=0;const k=Math.floor(t);for(let i=0;i<k;i++)s+=a[i];return s+a[k]*(t-k)};
+const cumCost=(a,t)=>{let s=0;const k=Math.floor(t);for(let i=0;i<k;i++)s+=a[i]*RATE[cls(i)];return s+a[k]*RATE[cls(k)]*(t-k)};
+const sum=a=>a.reduce((x,y)=>x+y,0);
+
+function model(P){
+  const M={base:[],load:[],hvac0:[],hvac:[],light0:[],light:[],plug0:[],plug:[],sol:[],pz:[],bat:[],soc:[],grid:[],exp:[],curt:[],pre:[]};
+  for(let h=0;h<24;h++){
+    const o=OCC[h]/100;
+    const hv=10+2.9*(OUT[h]-22)*(0.35+0.65*o);
+    const li=8+20*o, pl=17+35*o;
+    M.hvac0[h]=hv; M.light0[h]=li; M.plug0[h]=pl; M.base[h]=hv+li+pl;
+    M.hvac[h]=hv*(1-0.06*P.setOff)*(o<0.1?0.62:1);
+    const dl=(h>=8&&h<=16)?0.45:0.22;
+    M.light[h]=li*(1-dl); M.plug[h]=pl*0.95;
+    M.curt[h]=0; M.pre[h]=0;
+    const irr=Math.pow(Math.max(0,Math.sin(Math.PI*(h-6)/12)),1.25)*(0.92+0.08*Math.sin(h*1.7));
+    M.sol[h]=P.solarKw*irr*0.82;
+    M.pz[h]=1.8*o;
+  }
+  const win=[{pk:[9,10,11],pre:[6,7,8],w:[.25,.35,.4]},{pk:[18,19,20,21],pre:[15,16,17],w:[.3,.35,.35]}];
+  win.forEach(x=>{
+    let E=0;
+    x.pk.forEach(h=>{const r=M.hvac[h]*P.curtail/100;M.hvac[h]-=r;M.curt[h]=r;E+=r});
+    E*=1.08;
+    x.pre.forEach((h,i)=>{M.hvac[h]+=E*x.w[i];M.pre[h]=E*x.w[i]});
+  });
+  for(let h=0;h<24;h++)M.load[h]=M.hvac[h]+M.light[h]+M.plug[h];
+  const cap=P.batKwh, maxP=cap/7, minS=cap*.1, maxS=cap*.9;
+  let soc=cap*.25;
+  for(let d=0;d<2;d++)for(let h=0;h<24;h++){
+    let p=0;const c=cls(h);
+    const net=Math.max(0,M.load[h]-M.sol[h]-M.pz[h]);
+    if(c==='peak'){p=Math.max(0,Math.min(maxP,soc-minS,net))}
+    else if(c==='off'){p=-Math.min(maxP,(maxS-soc)/0.95)}
+    else if(h>=12&&h<15){p=-Math.min(maxP*0.6,(maxS-soc)/0.95)}
+    if(p>0)soc-=p;else soc+=(-p)*0.95;
+    if(cap===0){p=0;soc=0}
+    if(d===1){M.bat[h]=p;M.soc[h]=soc}
+  }
+  for(let h=0;h<24;h++){
+    const n=M.load[h]-M.sol[h]-M.pz[h]-M.bat[h];
+    M.grid[h]=Math.max(0,n);M.exp[h]=Math.max(0,-n);
+  }
+  const S={};
+  S.dayBase=sum(M.base);S.dayLoad=sum(M.load);S.dayGrid=sum(M.grid);
+  const cost=a=>a.reduce((s,v,h)=>s+v*RATE[cls(h)],0);
+  S.cBase=cost(M.base);S.cLoad=cost(M.load);S.cGrid=cost(M.grid);
+  S.peakBase=Math.max.apply(null,M.base);S.peakGrid=Math.max.apply(null,M.grid);
+  const pkh=[9,10,11,18,19,20,21];
+  S.pkBase=Math.max.apply(null,pkh.map(h=>M.base[h]));S.pkGrid=Math.max.apply(null,pkh.map(h=>M.grid[h]));
+  S.byBase={off:0,normal:0,peak:0};S.byGrid={off:0,normal:0,peak:0};S.costBase={off:0,normal:0,peak:0};S.costGrid={off:0,normal:0,peak:0};
+  for(let h=0;h<24;h++){const c=cls(h);S.byBase[c]+=M.base[h];S.byGrid[c]+=M.grid[h];S.costBase[c]+=M.base[h]*RATE[c];S.costGrid[c]+=M.grid[h]*RATE[c]}
+  S.sol=sum(M.sol);S.pz=sum(M.pz);S.dis=sum(M.bat.map(v=>Math.max(0,v)));
+  S.ren=sum(M.load.map((v,h)=>Math.min(v,M.sol[h]+M.pz[h]+Math.max(0,M.bat[h]))));
+  S.shifted=Math.max(sum(M.curt),0);
+  S.peakDropPct=100*(1-S.pkGrid/S.pkBase);
+  S.saveDay=S.cBase-S.cGrid;S.saveYear=S.saveDay*DAYS;
+  S.capex={solar:P.solarKw*42000,bat:P.batKwh*16000,ctrl:2000000,piezo:350000};
+  S.capexTot=S.capex.solar+S.capex.bat+S.capex.ctrl+S.capex.piezo;
+  S.payback=S.saveYear>0?S.capexTot/S.saveYear:Infinity;
+  S.co2Base=S.dayBase*CO2F;S.co2Opt=S.dayGrid*CO2F;S.co2Year=(S.co2Base-S.co2Opt)*DAYS/1000;
+  S.intensity=S.dayGrid*365/5200;S.intensityBase=S.dayBase*365/5200;
+  return {M,S};
+}
+
+/* ---------- state ---------- */
+let {M,S}=model(P);
+const R=rng(42);
+const noise=()=>(R()-.5)*2;
+const FC=OCC.map(()=>({a:noise(),b:noise(),o:noise()}));
+function mlSeries(){
+  const fc=[],act=[],lo=[],hi=[],ofc=[],oact=[];
+  for(let h=0;h<24;h++){
+    const f=M.load[h]*(1+0.02*FC[h].a);
+    const a=M.load[h]*(1+0.045*FC[h].b);
+    fc.push(f);act.push(a);lo.push(f*0.93);hi.push(f*1.07);
+    ofc.push(clamp(OCC[h]*(1+0.06*FC[h].o),0,100));oact.push(clamp(OCC[h]*(1+0.10*FC[h].b),0,100));
+  }
+  const mape=100*sum(act.map((a,h)=>Math.abs(a-fc[h])/a))/24;
+  const omae=sum(oact.map((a,h)=>Math.abs(a-ofc[h])))/24;
+  return {fc,act,lo,hi,ofc,oact,mape,omae};
+}
+let ML=mlSeries();
+
+const ZONES=[
+  {n:'Lobby and cafeteria',f:.7,tb:.2,fl:'Ground'},
+  {n:'Open office',f:1,tb:0,fl:'Floor 1'},
+  {n:'Design studio',f:.85,tb:-.2,fl:'Floor 2'},
+  {n:'Conference floor',f:1.15,tb:.3,fl:'Floor 3'},
+  {n:'Executive floor',f:.55,tb:-.1,fl:'Floor 4'}
+];
+function modeAt(t){
+  if((t>=6&&t<9)||(t>=15&&t<18))return 'precool';
+  if((t>=9&&t<12)||(t>=18&&t<22))return 'dr';
+  if(t>=22||t<6)return 'setback';
+  return 'normal';
+}
+const MODELBL={precool:'Pre-cooling',dr:'Demand response',normal:'Normal auto',setback:'Night setback'};
+function zoneState(t,i){
+  const z=ZONES[i],m=modeAt(t);
+  const occ=clamp(lerpArr(OCC,t)*z.f,0,100);
+  const off=m==='precool'?-1.3:m==='dr'?Math.min(1.1,0.45*P.curtail/30+0.2):m==='setback'?2.5:0;
+  const temp=24+off+z.tb+0.15*Math.sin(t*1.3+i);
+  const co2=Math.round(420+occ*5.2+(i===3?25:0));
+  const day=Math.max(0,Math.sin(Math.PI*(t-6)/12))*900;
+  const lux=occ<5?0:Math.round(clamp(500-day*0.6,180,500)+day*0.6*0.98+(i-2)*6);
+  let score;
+  if(occ<5)score=null;
+  else score=clamp(100-9*Math.max(0,Math.abs(temp-24)-0.5)-Math.max(0,co2-800)/15-Math.abs(lux-500)/20,0,100);
+  const lightPct=occ<5?0:Math.round(clamp(100-day/900*55,40,100));
+  return {occ,temp,co2,lux,score,lightPct,mode:m};
+}
+function snap(t){
+  const s={t,h:Math.floor(t)};
+  ['load','base','sol','pz','bat','soc','grid','exp','hvac','hvac0','light','plug'].forEach(k=>s[k]=lerpArr(M[k],t));
+  s.cls=cls(s.h);s.mode=modeAt(t);s.out=lerpArr(OUT,t);s.occ=lerpArr(OCC,t);
+  s.zones=ZONES.map((z,i)=>zoneState(t,i));
+  const sc=s.zones.filter(z=>z.score!=null).map(z=>z.score);
+  s.comfort=sc.length?sc.reduce((a,b)=>a+b,0)/sc.length:97;
+  s.socPct=P.batKwh>0?clamp(s.soc/P.batKwh,0,1):0;
+  s.solFrac=P.solarKw>0?clamp(s.sol/P.solarKw,0,1):0;
+  return s;
+}
+
+/* ---------- events, alerts ---------- */
+const ALERTS=[
+  {t:8.1,lvl:'warn',txt:'Floor 3 CO₂ sensor reads 65 ppm above its neighbours. Recalibrate.'},
+  {t:10.75,lvl:'warn',txt:'CH-2 efficiency dropped to COP 3.4 (rated 4.1). Condenser fouling likely, confidence 0.87.'},
+  {t:14.33,lvl:'bad',txt:'AHU-03 energy is 18% above its baseline. Fan bearing wear suspected, anomaly score 0.81.'}
+];
+const EVENTS=[
+  {t:0,txt:'Battery charging from off-peak grid at ₹5.5 per kWh.',k:'auto'},
+  {t:6,txt:'Morning pre-cooling begins. Floors cool to 22.7°C while outdoor air is still mild.',k:'ai'},
+  {t:9,txt:'Demand response on. Setpoint drifts up, CH-2 staged off, battery takes load.',k:'auto'},
+  {t:12,txt:'Solar above 55 kW. Battery tops up from surplus PV.',k:'auto'},
+  {t:13.25,txt:'Daylight harvesting dims Floor 3 lights to 62%.',k:'auto'},
+  {t:15,txt:'Evening pre-cooling starts, forecast peak-window demand confirmed by the load model.',k:'ai'},
+  {t:15.17,txt:'Facility manager holds Floor 4 at 22°C for a client visit. Automation paused for that zone.',k:'manual'},
+  {t:18,txt:'Evening peak: demand response on, battery discharging at full rate.',k:'auto'},
+  {t:20.5,txt:'Design studio unoccupied for 30 minutes. AHU-02 setpoint moved from 22°C to 26°C.',k:'auto'},
+  {t:22,txt:'Off-peak begins. Night setback, lights to security mode, battery recharges.',k:'auto'}
+];
+
+/* ---------- charts ---------- */
+const root=document.documentElement;
+const cv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const charts={};
+const series=a=>a.map((y,x)=>({x,y}));
+let curT=7;
+const GRIDC='rgba(120,160,230,.13)',TICK='#8fa6c8';
+function pill(ctx,x,y,txt,col){
+  ctx.font='600 11px "Schibsted Grotesk",sans-serif';
+  const w=ctx.measureText(txt).width+16,h=19,l=x-w/2,r=x+w/2,b=y+h,rd=4;
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(l+rd,y);ctx.lineTo(r-rd,y);ctx.quadraticCurveTo(r,y,r,y+rd);ctx.lineTo(r,b-rd);ctx.quadraticCurveTo(r,b,r-rd,b);ctx.lineTo(l+rd,b);ctx.quadraticCurveTo(l,b,l,b-rd);ctx.lineTo(l,y+rd);ctx.quadraticCurveTo(l,y,l+rd,y);ctx.fill();
+  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,x,y+h/2+.5);
+}
+const GROUPS=[
+  {a:0,b:6,k:'off',l:'Off-peak'},{a:6,b:9,k:'pre',l:'Pre-cooling'},{a:9,b:12,k:'peak',l:'Peak period'},
+  {a:15,b:18,k:'pre',l:'Pre-cooling'},{a:18,b:22,k:'peak',l:'Peak period'},{a:22,b:24,k:'off',l:'Off-peak'}
+];
+const BANDC={off:'rgba(141,255,92,.06)',pre:'rgba(79,140,255,.15)',peak:'rgba(255,77,94,.16)'};
+const PILLC={off:'#2c8f4e',pre:'#2f6bd6',peak:'#d63a4a'};
+const bandsPlugin={id:'bands',beforeDraw(c){
+  const a=c.chartArea,x=c.scales.x;if(!a||!x||x.type!=='linear')return;
+  const ctx=c.ctx,lab=c.options.plugins.bands&&c.options.plugins.bands.labels;
+  ctx.save();
+  GROUPS.forEach(g=>{
+    const x0=clamp(x.getPixelForValue(g.a-.5),a.left,a.right),x1=clamp(x.getPixelForValue(g.b-.5),a.left,a.right);
+    ctx.fillStyle=BANDC[g.k];ctx.fillRect(x0,a.top,x1-x0,a.bottom-a.top);
+    if(lab&&x1-x0>78)pill(ctx,(x0+x1)/2,a.top+6,g.l,PILLC[g.k]);
+  });
+  ctx.restore();
+}};
+const markerPlugin={id:'marker',afterDraw(c){
+  const a=c.chartArea,x=c.scales.x;if(!a||!x||x.type!=='linear')return;
+  const px=x.getPixelForValue(Math.min(curT,23));
+  c.ctx.save();c.ctx.strokeStyle='#ffffff';c.ctx.lineWidth=1.5;c.ctx.setLineDash([4,3]);c.ctx.shadowColor='#fff';c.ctx.shadowBlur=6;
+  c.ctx.beginPath();c.ctx.moveTo(px,a.top);c.ctx.lineTo(px,a.bottom);c.ctx.stroke();c.ctx.restore();
+}};
+function baseOpts(yTitle,stack,labels){
+  return {responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},
+    plugins:{bands:{labels:!!labels},legend:{position:'bottom',labels:{color:TICK,boxWidth:12,boxHeight:12,font:{family:'Schibsted Grotesk'}}},
+      tooltip:{callbacks:{title:it=>it.length?hhmm(it[0].parsed.x!=null?it[0].parsed.x:0):''}}},
+    scales:{x:{type:'linear',min:0,max:23,ticks:{stepSize:3,color:TICK,callback:v=>pad(v)+':00'},grid:{color:GRIDC}},
+            y:{stacked:!!stack,beginAtZero:true,title:{display:!!yTitle,text:yTitle,color:TICK},ticks:{color:TICK},grid:{color:GRIDC}}}};
+}
+function ds(label,data,color,extra){return Object.assign({label,data:series(data),borderColor:color,backgroundColor:color,borderWidth:2,pointRadius:0,tension:.35},extra||{})}
+const gf=(hex,a0,a1)=>ctx=>{const a=ctx.chart.chartArea;if(!a)return hex+'33';const g=ctx.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,hex+a0);g.addColorStop(1,hex+a1);return g};
+function buildCharts(){
+  Object.keys(charts).forEach(k=>{charts[k].destroy();delete charts[k]});
+  const teal='#3be3f7',mute='#8fa6c8',amber='#ffb627',blue='#4f8cff',violet='#a98bff',green='#8dff5c',orange='#ff6a3d';
+  const lo=baseOpts('kW',false,true);lo.scales.y.suggestedMax=150;
+  charts.load=new Chart($('cLoad'),{type:'line',data:{datasets:[
+    ds('Baseline demand',M.base,orange,{borderDash:[6,4],borderWidth:2}),
+    ds('Optimised building load',M.load,blue),
+    ds('Grid import after solar and battery',M.grid,teal,{borderWidth:3,fill:true,backgroundColor:gf(teal,'88','06')})
+  ]},options:lo,plugins:[bandsPlugin,markerPlugin]});
+  charts.mix=new Chart($('cMix'),{type:'line',data:{datasets:[
+    ds('Grid',M.grid,mute,{fill:true,backgroundColor:mute+'55',tension:.25}),
+    ds('Solar',M.sol,amber,{fill:true,backgroundColor:amber+'99',tension:.25}),
+    ds('Piezo',M.pz,violet,{fill:true,backgroundColor:violet+'99',tension:.25}),
+    ds('Battery discharge',M.bat.map(v=>Math.max(0,v)),green,{fill:true,backgroundColor:green+'88',tension:.25})
+  ]},options:baseOpts('kW',true),plugins:[bandsPlugin,markerPlugin]});
+  const bo=baseOpts('kWh');bo.scales.x={type:'category',ticks:{color:TICK},grid:{display:false}};bo.plugins.tooltip={};
+  charts.tod=new Chart($('cTod'),{type:'bar',data:{labels:['Off-peak','Normal','Peak'],datasets:[
+    {label:'Baseline',data:['off','normal','peak'].map(k=>S.byBase[k]),backgroundColor:orange+'bb',borderRadius:3},
+    {label:'Optimised (from grid)',data:['off','normal','peak'].map(k=>S.byGrid[k]),backgroundColor:teal,borderRadius:3}
+  ]},options:bo});
+  const fo=baseOpts('kW',false,true);
+  fo.plugins.legend={position:'bottom',labels:{color:TICK,boxWidth:12,filter:i=>i.text!=='Upper band'&&i.text!=='Lower band'}};
+  charts.fc=new Chart($('cFc'),{type:'line',data:{datasets:[
+    ds('Upper band',ML.hi,amber+'00',{fill:'+1',backgroundColor:amber+'2a',borderWidth:0}),
+    ds('Lower band',ML.lo,amber+'00',{borderWidth:0}),
+    ds('ML forecast',ML.fc,amber,{borderWidth:2.5,fill:false}),
+    ds('Actual so far',ML.act.map((v,h)=>h<=Math.floor(curT)?v:null),teal,{borderWidth:2.5,fill:true,backgroundColor:gf(teal,'55','05')})
+  ]},options:fo,plugins:[bandsPlugin,markerPlugin]});
+  const oo=baseOpts('% of capacity');oo.scales.y.max=100;
+  charts.oc=new Chart($('cOc'),{type:'line',data:{datasets:[
+    ds('Forecast',ML.ofc,violet,{borderWidth:2.5}),
+    ds('Actual so far',ML.oact.map((v,h)=>h<=Math.floor(curT)?v:null),teal,{borderWidth:2})
+  ]},options:oo,plugins:[bandsPlugin,markerPlugin]});
+}
+function refreshCharts(){
+  const c=charts;
+  c.load.data.datasets[0].data=series(M.base);c.load.data.datasets[1].data=series(M.load);c.load.data.datasets[2].data=series(M.grid);
+  c.mix.data.datasets[0].data=series(M.grid);c.mix.data.datasets[1].data=series(M.sol);c.mix.data.datasets[2].data=series(M.pz);c.mix.data.datasets[3].data=series(M.bat.map(v=>Math.max(0,v)));
+  c.tod.data.datasets[0].data=['off','normal','peak'].map(k=>S.byBase[k]);c.tod.data.datasets[1].data=['off','normal','peak'].map(k=>S.byGrid[k]);
+  c.fc.data.datasets[0].data=series(ML.hi);c.fc.data.datasets[1].data=series(ML.lo);c.fc.data.datasets[2].data=series(ML.fc);
+  c.fc.data.datasets[3].data=series(ML.act.map((v,h)=>h<=Math.floor(curT)?v:null));
+  c.oc.data.datasets[0].data=series(ML.ofc);c.oc.data.datasets[1].data=series(ML.oact.map((v,h)=>h<=Math.floor(curT)?v:null));
+  Object.keys(c).forEach(k=>c[k].update('none'));
+}
+let lastHour=-1;
+function drawMarkers(){['load','mix','fc','oc'].forEach(k=>charts[k]&&charts[k].draw())}
+
+/* ---------- static UI ---------- */
+function buildRail(){
+  const segs=$('segs');segs.innerHTML='';
+  for(let h=0;h<24;h++){const i=document.createElement('i');i.className=cls(h)+(PRE(h)?' pre':'');i.title=pad(h)+':00 '+CLSLABEL[cls(h)]+(PRE(h)?', pre-cooling':'');segs.appendChild(i)}
+  const tk=document.createElement('div');tk.className='ticks';
+  ['00:00','03:00','06:00','09:00','12:00','15:00','18:00','21:00'].forEach(x=>{const s=document.createElement('span');s.textContent=x;tk.appendChild(s)});
+  $('track').parentNode.insertBefore(tk,$('track').nextSibling);
+}
+function st(a,b){return '<div class="stat"><span>'+a+'</span><span class="num">'+b+'</span></div>'}
+function updateStatic(){
+  $('steps').innerHTML=
+   '<div class="step"><b>1. Pre-cool before the peak</b><p>HVAC runs harder in the three hours before each peak window, when power is cheaper and outdoor air is milder. Extra HVAC energy: <span class="num">'+fmt(sum(M.pre))+' kWh</span>.</p></div>'+
+   '<div class="step"><b>2. Coast through the peak</b><p>Chillers ease off by '+P.curtail+'% while the battery covers '+fmt(S.dis)+' kWh. Peak-window demand from the grid falls from <span class="num">'+fmt(S.pkBase)+' kW</span> to <span class="num">'+fmt(S.pkGrid)+' kW</span>, a '+Math.round(S.peakDropPct)+'% cut.</p></div>'+
+   '<div class="step"><b>3. Recover on cheap units</b><p>The battery recharges off-peak and from midday sun. Bill per day drops from <span class="num">'+inr(S.cBase)+'</span> to <span class="num">'+inr(S.cGrid)+'</span>.</p></div>';
+  const rows=k=>'<tr><td>'+CLSLABEL[k]+' at ₹'+RATE[k]+'</td><td class="r num">'+fmt(S.byBase[k])+'</td><td class="r num">'+fmt(S.byGrid[k])+'</td><td class="r num">'+inr(S.costBase[k])+'</td><td class="r num">'+inr(S.costGrid[k])+'</td></tr>';
+  $('todTable').innerHTML='<tr><th>Band</th><th class="r">Base kWh</th><th class="r">Opt kWh</th><th class="r">Base ₹</th><th class="r">Opt ₹</th></tr>'+rows('off')+rows('normal')+rows('peak')+
+    '<tr><td><b>Day total</b></td><td class="r num">'+fmt(S.dayBase)+'</td><td class="r num">'+fmt(S.dayGrid)+'</td><td class="r num">'+inr(S.cBase)+'</td><td class="r num"><b>'+inr(S.cGrid)+'</b></td></tr>';
+  $('mixNote').innerHTML='Solar gives <b class="num">'+fmt(S.sol)+' kWh</b> a day, piezo marble <b class="num">'+S.pz.toFixed(1)+' kWh</b>, and the battery moves <b class="num">'+fmt(S.dis)+' kWh</b> out of the peak. Together they meet <b class="num">'+Math.round(100*S.ren/S.dayLoad)+'%</b> of demand.';
+  const peakFc=Math.max.apply(null,[9,10,11,18,19,20,21].map(h=>ML.fc[h]));
+  $('rec').innerHTML='<b>Recommendation for tomorrow.</b> The load model expects peak-window building demand of about <span class="num">'+fmt(peakFc*1.02)+' kW</span> on a day 1°C warmer. The optimiser schedules pre-cooling at <span class="num">06:00 and 15:00</span>, limits chillers to '+(100-P.curtail)+'% in the peak windows and reserves the battery for <span class="num">18:00 to 21:00</span>. Expected saving: <span class="num">'+inr(S.saveDay*1.03)+'</span>.';
+  $('mm1').innerHTML='Forecast error (MAPE) <b class="num">'+ML.mape.toFixed(1)+'%</b>, horizon 24 h';
+  $('mm2').innerHTML='Mean occupancy error <b class="num">'+ML.omae.toFixed(1)+' points</b>, horizon 24 h';
+  $('mm3').innerHTML='<b class="num">3</b> faults flagged today, median lead time <b class="num">9 days</b> before breakdown (simulated)';
+  const feats=[['Outdoor temperature',.34],['Hour of day',.24],['Occupancy',.17],['Solar irradiance',.11],['Day of week',.09],['Tariff band',.05]];
+  $('feat').innerHTML=feats.map(f=>'<div class="feat"><span>'+f[0]+'</span><div class="bar"><i style="width:'+(f[1]*100/0.34)+'%;background:linear-gradient(90deg,#7a5af0,#a98bff)"></i></div><span class="num">'+Math.round(f[1]*100)+'%</span></div>').join('');
+  const eff=S.cBase-S.cLoad, rew=S.cLoad-S.cGrid;
+  const trees=Math.round(S.co2Year*1000/21);
+  $('fin').innerHTML='<h3>Business case</h3>'+
+   st('Annual bill saving',inrL(S.saveYear)+' ('+Math.round(100*S.saveDay/S.cBase)+'%)')+
+   st('From efficiency and load shifting',inrL(eff*DAYS)+' a year')+
+   st('From solar, piezo and battery',inrL(rew*DAYS)+' a year')+
+   st('Retrofit cost',inrL(S.capexTot))+
+   st('Payback',isFinite(S.payback)?S.payback.toFixed(1)+' years':'n/a')+
+   st('Energy intensity',Math.round(S.intensity)+' kWh/m²/yr (was '+Math.round(S.intensityBase)+')')+
+   st('Carbon avoided',S.co2Year.toFixed(0)+' tCO₂e a year')+
+   st('Equal to trees planted',fmt(trees)+' trees')+
+   '<p class="note">Retrofit cost assumes ₹42,000 per kW of solar, ₹16,000 per kWh of battery, ₹20 lakh for sensors, controls and VFDs, and ₹3.5 lakh of piezo tiles. Working days: '+DAYS+' a year.</p>';
+  $('vSolar').textContent=P.solarKw+' kW';$('vBat').textContent=P.batKwh+' kWh';$('vCur').textContent=P.curtail+'%';$('vSet').textContent='+'+P.setOff+'°C';
+}
+
+/* ---------- live HUD ---------- */
+const IC={
+  bolt:'<path d="M13 2 4 14h6l-1 8 9-12h-6z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  users:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-4 3-6 6-6s6 2 6 6M15 14c3 0 6 1.5 6 5"/>',
+  rupee:'<path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l8 6"/>',
+  grid:'<path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>',
+  leaf:'<path d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15zM5 19 13 11"/>',
+  alert:'<path d="M12 3 2 21h20zM12 10v5M12 18v.5"/>',
+  battery:'<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10v4M7 10v4M11 10v4"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  peak:'<path d="M3 19 9 8l4 6 3-4 5 9z"/>',
+  pin:'<path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
+  fan:'<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 3-6 5-5-1 3-3 5-5 5zM14 12c4 0 6 3 5 5-3-1-5-3-5-5zM12 14c0 4-3 6-5 5 1-3 3-5 5-5zM10 12c-4 0-6-3-5-5 3 1 5 3 5 5z"/>'
+};
+const ic=n=>'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+IC[n]+'</svg>';
+const card=(title,icon,acc,body)=>'<div class="p" style="--acc:'+acc+'"><h3>'+ic(icon)+title+'</h3>'+body+'</div>';
+const r2=(l,v,c)=>'<div class="r2"><span>'+l+'</span><b class="nv '+(c||'')+'">'+v+'</b></div>';
+const u=x=>'<small>'+x+'</small>';
+const segbar=p=>{let h='<div class="seg">';const n=Math.round(clamp(p,0,100)/10);for(let i=0;i<10;i++)h+='<i class="'+(i<n?'on':'')+'"></i>';return h+'</div>'};
+
+function updateUI(s){
+  $('clk').textContent=hhmm(s.t);
+  $('needle').style.left=(s.t/24*100)+'%';
+  const savedKwh=Math.max(0,cum(M.base,s.t)-cum(M.grid,s.t));
+  const savedRs=Math.max(0,cumCost(M.base,s.t)-cumCost(M.grid,s.t));
+  const open=ALERTS.filter(a=>a.t<=s.t).length;
+  const renW=s.load>0?clamp((s.sol+s.pz+Math.max(0,s.bat))/s.load*100,0,100):0;
+  const anom=s.t>=14.33;
+  const cc=s.comfort>=90?'g':s.comfort>=75?'a':'r';
+  $('kpis').innerHTML=
+   '<div class="p kpi" style="--acc:#3be3f7"><h4>Energy saved today</h4><div class="kv"><b class="nv">'+fmt(savedKwh)+u('kWh')+'</b><b class="nv a">'+inr(savedRs)+'</b></div></div>'+
+   '<div class="p kpi" style="--acc:#8dff5c"><h4>Comfort score</h4><div class="kv"><b class="nv '+cc+'" style="font-size:40px">'+Math.round(s.comfort)+'</b><b class="nv w" style="font-size:24px;color:#dbe8ff">/ 100</b></div></div>'+
+   '<div class="p kpi" style="--acc:#ff6a3d"><h4>System alerts</h4><div class="kv"><b class="nv o" style="display:flex;align-items:center;gap:8px"><span style="width:26px;height:26px;display:inline-block">'+ic('pin').replace('class="ic"','class="ic" style="width:26px;height:26px;color:#ff6a3d"')+'</span>'+open+u(open===1?'alert':'alerts')+'</b></div></div>'+
+   '<div class="p kpi" style="--acc:#3be3f7"><h4>Grid power vs renewables</h4><div class="kv"><b class="nv">'+Math.round(100-renW)+'%<span class="kl">from grid</span></b><b class="nv a">'+Math.round(renW)+'%<span class="kl">solar, piezo, battery</span></b></div></div>'+
+   '<div class="p kpi" style="--acc:#4f8cff"><h4>HVAC status</h4><ul>'+
+     '<li><i class="dotc" style="background:'+(anom?'#ff4d5e':'#8dff5c')+';box-shadow:0 0 8px '+(anom?'#ff4d5e':'#8dff5c')+'"></i>'+(anom?'AHU-03 anomaly detected':'All units normal')+'</li>'+
+     '<li><i class="dotc" style="background:'+(s.mode==='precool'?'#4f8cff':s.mode==='dr'?'#ffb627':'#8fa6c8')+';box-shadow:0 0 8px currentColor"></i>'+(s.mode==='precool'?'Pre-cooling active':s.mode==='dr'?'Demand response active':s.mode==='setback'?'Night setback':'Auto mode')+'</li></ul></div>';
+
+  const iaqMax=Math.max.apply(null,s.zones.map(z=>z.co2));
+  const iaq=iaqMax<800?['Good','g']:iaqMax<1000?['Fair','a']:['Poor','r'];
+  const bc=s.bat>0.5?'Discharging '+s.bat.toFixed(0)+' kW':s.bat<-0.5?'Charging '+(-s.bat).toFixed(0)+' kW':'Idle';
+  $('colL').innerHTML=
+   card('Energy performance','bolt','#3be3f7',
+     r2('Current load',s.load.toFixed(0)+u('kW'))+
+     r2('Used today',fmt(cum(M.load,s.t))+u('kWh'),'sm')+
+     '<div class="r2" style="padding-top:8px"><span>Solar output</span></div><div class="barrow">'+ic('sun').replace('class="ic"','class="ic" style="width:30px;height:30px;color:#ffb627"')+'<div class="bar"><i style="width:'+(s.solFrac*100)+'%"></i></div><b class="nv a sm">'+s.sol.toFixed(0)+u('kW')+'</b></div>')+
+   card('Occupancy and comfort','users','#8dff5c',
+     r2('Occupancy',Math.round(s.occ)+u('%'),'g')+segbar(s.occ)+
+     r2('Indoor air quality',iaq[0],iaq[1])+
+     '<div class="r2"><span>Highest CO₂</span><b class="num" style="color:#c6d6f0">'+iaqMax+' ppm</b></div>')+
+   card('Cost savings','rupee','#ffb627',
+     r2('Saved today',inr(savedRs),'a')+
+     r2('Monthly savings',inr(S.saveDay*30),'a sm')+
+     '<div class="r2"><span>Annual savings</span><b class="num" style="color:#ffe27a">'+inrL(S.saveYear)+'</b></div>')+
+   card('Grid and storage','battery','#4f8cff',
+     r2('Import',s.grid.toFixed(0)+u('kW'),'b')+
+     r2('Export',s.exp.toFixed(0)+u('kW'),'b')+
+     '<div class="r2"><span>Battery '+Math.round(s.socPct*100)+'%</span><b class="num" style="color:#8dff5c">'+bc+'</b></div><div class="bar" style="margin-top:4px"><i style="width:'+(s.socPct*100)+'%;background:linear-gradient(90deg,#3bb96b,#8dff5c)"></i></div>');
+
+  const offPct=100*S.byGrid.off/S.dayGrid;
+  const co2Now=cum(M.grid,s.t)*CO2F;
+  $('colR').innerHTML=
+   card('Peak load management','peak','#ff6a3d',
+     r2('Peak load (grid)',S.pkGrid.toFixed(0)+u('kW'),'o')+
+     '<div class="r2"><span>Baseline peak</span><b class="num" style="color:#c6d6f0">'+S.pkBase.toFixed(0)+' kW</b></div>'+
+     r2('Shifted off-peak',fmt(sum(M.pre))+u('kWh'),'a sm')+
+     '<div class="r2"><span>Tariff now</span><span class="chip '+s.cls+'">'+CLSLABEL[s.cls]+' ₹'+RATE[s.cls]+'</span></div>')+
+   card('TOD analysis','clock','#3be3f7',
+     r2('Off-peak usage',Math.round(offPct)+u('%'))+
+     r2('Saved per day',inr(S.saveDay),'a sm')+
+     '<div class="r2"><span>Bill reduction</span><b class="num" style="color:#8dff5c">'+Math.round(100*S.saveDay/S.cBase)+'%</b></div>')+
+   card('Carbon footprint','leaf','#8dff5c',
+     r2('CO₂ emitted so far',fmt(co2Now)+u('kg'),'g sm')+
+     r2('CO₂ reduced',Math.round(100*(1-S.dayGrid/S.dayBase))+u('%'),'g')+
+     '<div class="r2"><span>Avoided per year</span><b class="num" style="color:#c6d6f0">'+S.co2Year.toFixed(0)+' tCO₂e</b></div>')+
+   card('Renewables','sun','#ffb627',
+     r2('Solar today',fmt(cum(M.sol,s.t))+u('kWh'),'a sm')+
+     r2('Piezo marble',(cum(M.pz,s.t)).toFixed(1)+u('kWh'),'sm')+
+     '<div class="r2"><span>Covering demand now</span><b class="num" style="color:#ffe27a">'+Math.round(renW)+'%</b></div>');
+
+  $('zones').innerHTML=s.zones.map((z,i)=>{
+    const sc=z.score==null?'Setback':Math.round(z.score);
+    const c=z.score==null?'':z.score>=90?'ok':z.score>=75?'warn':'bad';
+    return '<div class="zone"><div class="zt"><b>'+ZONES[i].n+'</b><span class="chip">'+ZONES[i].fl+'</span></div><div class="zs num" style="'+(z.score==null?'color:#8fa6c8;font-size:20px;text-shadow:none':'')+'">'+sc+(z.score==null?'':'<small style="font-size:13px"> /100</small>')+'</div><span class="chip '+c+'">'+(z.score==null?'Unoccupied':c==='ok'?'Comfortable':c==='warn'?'Drifting':'Needs action')+'</span>'+
+     '<dl><dt>Occupancy</dt><dd class="num">'+Math.round(z.occ)+'%</dd><dt>Temperature</dt><dd class="num">'+z.temp.toFixed(1)+'°C</dd><dt>CO₂</dt><dd class="num">'+z.co2+' ppm</dd><dt>Light</dt><dd class="num">'+z.lux+' lux, '+z.lightPct+'%</dd></dl></div>';
+  }).join('');
+  const H=s.hvac,dr=s.mode==='dr',pre=s.mode==='precool';
+  const ch2Off=dr;
+  const eq=[
+   ['CH-1','Chiller',ch2Off?.55:.30,94,ch2Off?.55:.30],
+   ['CH-2','Chiller',ch2Off?0:.25,71,.25],
+   ['AHU-01','Air handler',.075,96,.075],['AHU-02','Air handler',.075,93,.075],
+   ['AHU-03','Air handler',.075*1.18,64,.075],['AHU-04','Air handler',.075,91,.075],
+   ['CHWP-1','Pump',.08,88,.08],['CT-1','Cooling tower',.07,90,.07]
+  ];
+  let h='<tr><th>Unit</th><th>Type</th><th class="r">Load</th><th class="r">Vs baseline</th><th class="r">Health</th><th>State</th></tr>';
+  eq.forEach(e=>{
+    const kw=H*e[2],exp=H*e[4];
+    const d=exp>0.3?(kw/exp-1)*100:0;
+    const hc=e[3]>=85?'ok':e[3]>=70?'warn':'bad';
+    const state=e[0]==='CH-2'&&ch2Off?'Staged off':pre?'Pre-cooling':dr?'Curtailed':s.mode==='setback'?'Setback':'Auto';
+    h+='<tr><td><b>'+e[0]+'</b></td><td>'+e[1]+'</td><td class="r num">'+kw.toFixed(1)+' kW</td><td class="r num" style="color:'+(d>10?'var(--red)':'inherit')+'">'+(kw<0.3?'0%':(d>=0?'+':'')+d.toFixed(0)+'%')+'</td><td class="r"><span class="chip '+hc+'">'+e[3]+'</span></td><td>'+state+'</td></tr>';
+  });
+  $('eq').innerHTML=h;
+  const items=[];
+  EVENTS.filter(e=>e.t<=s.t).forEach(e=>items.push({t:e.t,txt:e.txt,k:e.k}));
+  ALERTS.filter(a=>a.t<=s.t).forEach(a=>items.push({t:a.t,txt:a.txt,k:'ai'}));
+  items.sort((a,b)=>b.t-a.t);
+  const lab={auto:'Automatic',ai:'ML',manual:'Manual override'};
+  $('log').innerHTML='<ul>'+(items.length?items.map(i=>'<li><span class="tm num">'+hhmm(i.t)+'</span><span>'+i.txt+'<span class="tagpill '+i.k+'">'+lab[i.k]+'</span></span></li>').join(''):'<li><span></span><span>No actions yet today.</span></li>')+'</ul>';
+  if(s.h!==lastHour){
+    lastHour=s.h;
+    charts.fc&&(charts.fc.data.datasets[3].data=series(ML.act.map((v,k)=>k<=s.h?v:null)),charts.fc.update('none'));
+    charts.oc&&(charts.oc.data.datasets[1].data=series(ML.oact.map((v,k)=>k<=s.h?v:null)),charts.oc.update('none'));
+  }
+  curT=s.t;drawMarkers();
+}
+
+/* ---------- 3D twin ---------- */
+const scene3={ok:false};
+function init3D(){
+  const box=$('twinbox');
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){box.insertAdjacentHTML('beforeend','<div style="padding:30px;color:#fff">3D view needs WebGL, which this browser has turned off. The rest of the dashboard still works.</div>');return}
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  box.insertBefore(renderer.domElement,box.firstChild);
+  const scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0x0b1a3a,30,64);
+  const camera=new THREE.PerspectiveCamera(30,1,.1,220);
+  const target=new THREE.Vector3(.6,2.1,.8);
+  let theta=.74,phi=1.0,radius=25,idle=0,sway=0;
+  function place(){
+    camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta+sway),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta+sway));
+    camera.lookAt(target);
+  }
+  const hemi=new THREE.HemisphereLight(0x9cc8ff,0x1a2a44,.6);scene.add(hemi);
+  const sunL=new THREE.DirectionalLight(0xffffff,1);sunL.position.set(6,10,4);scene.add(sunL);
+  const warm1=new THREE.PointLight(0xffb45a,1,9);warm1.position.set(0,1.6,0);scene.add(warm1);
+  const warm2=new THREE.PointLight(0xffb45a,1,9);warm2.position.set(0,3.6,0);scene.add(warm2);
+  const MT=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.75,metalness:.05},o||{}));
+  const bx=(w,h,d,m)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+  const put=(o,x,y,z,par)=>{o.position.set(x,y,z);(par||scene).add(o);return o};
+  function glow(hex,size){
+    const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');
+    const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,hex);gr.addColorStop(1,'rgba(0,0,0,0)');
+    g.fillStyle=gr;g.fillRect(0,0,64,64);
+    const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,fog:false}));
+    s.scale.set(size,size,1);return s;
+  }
+  function tex(fn,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.anisotropy=4;return t}
+
+  /* ground, site, roads */
+  const gMat=new THREE.MeshStandardMaterial({color:0x0c1a33,roughness:1});
+  put(new THREE.Mesh(new THREE.PlaneGeometry(140,140),gMat),0,0,0).rotation.x=-Math.PI/2;
+  const lawn=put(new THREE.Mesh(new THREE.PlaneGeometry(24,17),MT(0x1d5a34,{roughness:1})),0,.01,-.5);lawn.rotation.x=-Math.PI/2;
+  const walk=put(new THREE.Mesh(new THREE.PlaneGeometry(15,4.4),MT(0x445266,{roughness:.9})),.5,.02,4.8);walk.rotation.x=-Math.PI/2;
+  const road=put(new THREE.Mesh(new THREE.PlaneGeometry(60,3.4),MT(0x151c28,{roughness:.95})),0,.03,9.2);road.rotation.x=-Math.PI/2;
+  const road2=put(new THREE.Mesh(new THREE.PlaneGeometry(3.4,60),MT(0x151c28,{roughness:.95})),-13.5,.03,0);road2.rotation.x=-Math.PI/2;
+  const dashM=new THREE.MeshBasicMaterial({color:0xdfe7f3});
+  for(let i=-14;i<=14;i++)put(bx(.9,.01,.09,dashM),i*1.9,.045,9.2);
+  for(let i=-8;i<=8;i++)put(bx(.09,.01,.9,dashM),-13.5,.045,i*1.9);
+
+  /* materials for the building */
+  const concrete=MT(0xb4bdc8,{roughness:.6});
+  const wall=MT(0xd3d9e0,{roughness:.7});
+  const frame=MT(0x27384f,{roughness:.4,metalness:.4});
+  const glassSide=new THREE.MeshStandardMaterial({color:0x6ec6ff,transparent:true,opacity:.30,roughness:.1,metalness:.5,depthWrite:false});
+  const glassFront=new THREE.MeshStandardMaterial({color:0xa6e0ff,transparent:true,opacity:.09,roughness:.05,metalness:.4,depthWrite:false});
+  const wood=MT(0x8f5d36,{roughness:.6});
+  const deskDark=MT(0x3a2a20);
+  const chairM=MT(0x22303f);
+  const FH=.92,SL=.1,W=6.4,D=5;
+  const floors=[],lightMats=[],screenMats=[],peopleG=[],diffs=[];
+  const PPL=[0xff8a3d,0x3be3f7,0xf2f2f2,0x8dff5c,0xff5e8a,0xa98bff];
+  for(let i=0;i<5;i++){
+    const y0=i*(FH+SL),cy=y0+SL+FH/2;
+    put(bx(W+.3,SL,D+.3,concrete),0,y0+SL/2,0);
+    put(bx(W,FH,.1,wall),0,cy,-D/2+.05);
+    put(bx(.1,FH,D,wall),-W/2+.05,cy,0);
+    put(bx(.05,FH,D,glassSide),W/2,cy,0);
+    for(let k=0;k<5;k++)put(bx(.07,FH,.07,frame),W/2,cy,-D/2+k*D/4);
+    put(bx(W,FH,.03,glassFront),0,cy,D/2);
+    for(let k=0;k<7;k++)put(bx(.06,FH,.06,frame),-W/2+k*W/6,cy,D/2);
+    put(bx(W,.05,.06,frame),0,y0+SL+FH-.02,D/2);
+    const ov=new THREE.Mesh(new THREE.BoxGeometry(W-.25,FH-.06,D-.25),new THREE.MeshBasicMaterial({color:0x3b82c4,transparent:true,opacity:.09,depthWrite:false}));
+    ov.position.set(0,cy,0);ov.userData.zone=i;scene.add(ov);floors.push(ov);
+    const lm=new THREE.MeshStandardMaterial({color:0xfff2d0,emissive:0xffc46b,emissiveIntensity:1});lightMats.push(lm);
+    for(let k=0;k<3;k++)put(bx(1.3,.03,.28,lm),-1.9+k*1.9,y0+SL+FH-.05,.1);
+    const sm=new THREE.MeshStandardMaterial({color:0x0c1520,emissive:0x35d8ff,emissiveIntensity:.6});screenMats.push(sm);
+    const grp=[];
+    let n=0;
+    for(let r=0;r<2;r++)for(let c=0;c<3;c++){
+      const dx=-2.0+c*2.0,dz=-1.3+r*1.5;
+      put(bx(1.0,.05,.5,wood),dx,y0+SL+.3,dz);
+      put(bx(.05,.3,.44,deskDark),dx-.45,y0+SL+.15,dz);put(bx(.05,.3,.44,deskDark),dx+.45,y0+SL+.15,dz);
+      put(bx(.34,.21,.03,sm),dx,y0+SL+.46,dz-.16);
+      put(bx(.28,.22,.28,chairM),dx,y0+SL+.13,dz+.5);
+      const p=new THREE.Group();
+      const body=new THREE.Mesh(new THREE.CylinderGeometry(.08,.09,.3,10),new THREE.MeshStandardMaterial({color:PPL[(n+i)%6],roughness:.6,emissive:PPL[(n+i)%6],emissiveIntensity:.15}));
+      body.position.y=.28;p.add(body);
+      const head=new THREE.Mesh(new THREE.SphereGeometry(.07,10,10),MT(0xf0c9a0));head.position.y=.5;p.add(head);
+      p.position.set(dx,y0+SL+.02,dz+.62);
+      if(i===4&&n%2)p.visible=false;
+      scene.add(p);grp.push(p);n++;
+    }
+    peopleG.push(grp);
+    const dg=[];
+    for(let k=0;k<2;k++){
+      const cone=new THREE.Mesh(new THREE.CylinderGeometry(.12,.6,.55,18,1,true),new THREE.MeshBasicMaterial({color:0x3bd8ff,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
+      cone.position.set(-1.2+k*2.4,y0+SL+FH-.36,-0.4);scene.add(cone);dg.push(cone);
+    }
+    diffs.push(dg);
+  }
+  const yT=5*(FH+SL)+SL;
+  put(bx(W+.3,SL,D+.3,concrete),0,5*(FH+SL)+SL/2,0);
+  const par=MT(0xaab4c1);
+  put(bx(W+.3,.22,.1,par),0,yT+.11,D/2+.1);put(bx(W+.3,.22,.1,par),0,yT+.11,-D/2-.1);
+  put(bx(.1,.22,D+.3,par),W/2+.1,yT+.11,0);put(bx(.1,.22,D+.3,par),-W/2-.1,yT+.11,0);
+  put(bx(W-.4,.02,.02,new THREE.MeshBasicMaterial({color:0x3be3f7})),0,yT+.24,D/2+.15);
+  // entrance
+  const doorM=new THREE.MeshStandardMaterial({color:0x1d2a36,emissive:0xffb45a,emissiveIntensity:.6});
+  put(bx(1.3,.72,.05,doorM),0,SL+.4,D/2+.03);
+  put(bx(1.9,.06,.9,MT(0x27384f)),0,SL+.86,D/2+.4);
+  const doorGlow=put(glow('rgba(255,180,90,.65)',3.2),0,SL+.5,D/2+.9);
+  // solar arrays
+  const cellTex=tex((g,w,h)=>{g.fillStyle='#14356f';g.fillRect(0,0,w,h);g.strokeStyle='rgba(140,185,255,.75)';g.lineWidth=2;for(let i=0;i<=w;i+=w/4){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke()}for(let j=0;j<=h;j+=h/6){g.beginPath();g.moveTo(0,j);g.lineTo(w,j);g.stroke()}},128,128);
+  const solMat=new THREE.MeshStandardMaterial({color:0xffffff,map:cellTex,roughness:.25,metalness:.5,emissive:0x2a6dff,emissiveIntensity:.2});
+  function sArray(x0){
+    for(let r=0;r<3;r++)for(let c=0;c<2;c++){
+      const p=bx(1.12,.05,.72,solMat);
+      put(p,x0+c*1.2,yT+.42,-.95+r*.95);p.rotation.x=-.32;
+      put(bx(.06,.32,.06,frame),x0+c*1.2,yT+.2,-.95+r*.95+.25);
+    }
+  }
+  sArray(-2.3);sArray(.75);
+  // roof AHUs
+  const fans=[];
+  const ahuM=MT(0x9aa3ad,{roughness:.5,metalness:.3});
+  for(let i=0;i<3;i++){
+    const b=put(bx(.7,.45,.7,ahuM),.9+i*1.1,yT+.3,-1.85);
+    put(bx(.6,.1,.02,frame),b.position.x,yT+.3,-1.49);
+    const f=new THREE.Group();
+    for(let k=0;k<3;k++){const bl=bx(.5,.02,.08,MT(0x2f3b47));bl.rotation.y=k*Math.PI/3;f.add(bl)}
+    put(f,b.position.x,yT+.55,b.position.z);fans.push(f);
+  }
+  put(bx(1.7,.08,1.2,MT(0x2f7d3a,{roughness:1})),-2.4,yT+.04,-1.75);
+  put(bx(1.0,.75,1.0,wall),2.6,yT+.38,1.7);
+  const battRoof=put(bx(.9,.3,.5,MT(0x3f8f6b)),-1.2,yT+.15,1.9);
+  // annex building
+  put(bx(3.0,1.5,3.4,MT(0x7d8a99)),7.0,.75,-.6);
+  put(bx(3.1,.08,3.5,MT(0x4a5563)),7.0,1.54,-.6);
+  put(bx(.7,.35,.7,ahuM),6.4,1.75,-1.2);put(bx(.7,.35,.7,ahuM),7.4,1.75,-.2);
+  for(let k=0;k<3;k++)put(bx(.5,.35,.03,new THREE.MeshStandardMaterial({color:0x111a26,emissive:0x2a8fff,emissiveIntensity:.5})),5.7,.9,-1.6+k*1);
+  // chiller plant and battery container
+  put(bx(1.7,.85,1.05,MT(0x6c8aa5,{metalness:.3})),-5.7,.43,-1.5);
+  const cts=[];
+  for(let i=0;i<2;i++){const c=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.9,20),MT(0x8098ad));put(c,-5.7+i*1.3,.45,-3.1);cts.push(c)}
+  put(bx(1.9,.9,.85,MT(0x3f8f6b)),-5.8,.46,2.2);
+  const socBar=put(bx(1.5,.11,.02,new THREE.MeshBasicMaterial({color:0xb9ffd8})),-5.8,.5,2.64);
+  put(bx(.34,.14,.03,new THREE.MeshBasicMaterial({color:0xffffff})),-5.8,.78,2.64);
+  // pylon
+  const pyM=MT(0x50586a,{metalness:.4});
+  put(bx(.16,4,.16,pyM),11,2,-5);put(bx(1.6,.09,.09,pyM),11,3.7,-5);put(bx(1.1,.09,.09,pyM),11,3.2,-5);
+  const lamp=new THREE.Mesh(new THREE.SphereGeometry(.17,16,16),new THREE.MeshBasicMaterial({color:0x888888}));put(lamp,11,4.1,-5);
+  // piezo pad
+  const padTex=tex((g,w,h)=>{g.fillStyle='#0b1220';g.fillRect(0,0,w,h);g.strokeStyle='rgba(60,190,255,.7)';g.lineWidth=2;const n=6;for(let i=0;i<=n;i++){g.beginPath();g.moveTo(i*w/n,0);g.lineTo(i*w/n,h);g.stroke();g.beginPath();g.moveTo(0,i*h/n);g.lineTo(w,i*h/n);g.stroke()}},256,256);
+  put(bx(3.4,.06,2.5,new THREE.MeshStandardMaterial({map:padTex,roughness:.3,metalness:.5})),0,.06,5.0);
+  const padGlow=put(glow('rgba(70,190,255,.9)',3.6),0,.4,5.0);
+  const ringM=new THREE.MeshBasicMaterial({color:0x66d4ff,transparent:true,opacity:.6,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+  const ring=put(new THREE.Mesh(new THREE.RingGeometry(.35,.42,40),ringM),0,.1,5.0);ring.rotation.x=-Math.PI/2;
+  // trees
+  const trunkM=MT(0x5a3d26),leafA=MT(0x2f9a48,{roughness:.9}),leafB=MT(0x1f7a3a,{roughness:.9});
+  [[-6.6,1.0,1],[-8,-1.5,1.2],[-4.4,-4,1.1],[3,-4.3,1],[8,3.7,1.1],[10.4,1.5,1.2],[-9.2,4.2,1],[-3,3.6,.8],[5.8,4,.9],[9.2,-4.6,1.1],[-10.5,-4,1.2]].forEach((t,i)=>{
+    put(new THREE.Mesh(new THREE.CylinderGeometry(.06*t[2],.09*t[2],.5*t[2],6),trunkM),t[0],.25*t[2],t[1]);
+    put(new THREE.Mesh(new THREE.IcosahedronGeometry(.55*t[2],0),i%2?leafA:leafB),t[0],.8*t[2],t[1]);
+    put(new THREE.Mesh(new THREE.IcosahedronGeometry(.38*t[2],0),i%2?leafB:leafA),t[0]+.15,1.15*t[2],t[1]-.05);
+  });
+  // cars
+  function car(col){
+    const g=new THREE.Group();
+    g.add(put(bx(1.0,.22,.46,MT(col,{roughness:.35,metalness:.4})),0,.2,0,g));
+    g.add(put(bx(.55,.2,.4,MT(0x1a2432,{roughness:.2,metalness:.5})),-.05,.4,0,g));
+    put(bx(.05,.06,.34,new THREE.MeshBasicMaterial({color:0xfff2b0})),.5,.22,0,g);
+    put(bx(.05,.06,.34,new THREE.MeshBasicMaterial({color:0xff4040})),-.5,.22,0,g);
+    scene.add(g);return g;
+  }
+  const carA=car(0xdfe6ee),carB=car(0x2a6bd6);
+  const pk=[[ -8.2,3.1,.3,0xb8c0cc],[-8.2,4.3,-.2,0xc0392b],[8.8,5.2,Math.PI/2,0x3b5b8c]];
+  pk.forEach(p=>{const c=car(p[3]);c.position.set(p[0],0,p[1]);c.rotation.y=p[2]});
+  // city backdrop
+  const rr=rng(9);
+  for(let i=0;i<26;i++){
+    const ang=Math.PI*(.05+.9*i/25)+Math.PI,rad=26+rr()*14;
+    const h=3+rr()*9,w=2+rr()*2.5;
+    const m=new THREE.MeshStandardMaterial({color:0x13264a,roughness:.8,emissive:0x0a2f66,emissiveIntensity:.5});
+    put(bx(w,h,w,m),Math.cos(ang)*rad,h/2,Math.sin(ang)*rad);
+  }
+  for(let i=0;i<8;i++){
+    const m=new THREE.MeshStandardMaterial({color:0x13264a,roughness:.8,emissive:0x0a2f66,emissiveIntensity:.5});
+    const h=2+rr()*5;put(bx(2.5,h,2.5,m),-26+rr()*4,h/2,-4+i*4);
+  }
+  // sun
+  const sun=new THREE.Mesh(new THREE.SphereGeometry(.9,20,20),new THREE.MeshBasicMaterial({color:0xffd54a,fog:false}));scene.add(sun);
+  const sunGlow=glow('rgba(255,210,90,.55)',7);scene.add(sunGlow);
+  // streams
+  function stream(a,b,color,n){
+    const g=[];
+    for(let i=0;i<n;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(.09,8,8),new THREE.MeshBasicMaterial({color}));scene.add(m);g.push(m)}
+    return {a,b,g,ph:0,rev:false};
+  }
+  const streams={
+    sol:stream(new THREE.Vector3(-.4,yT+.7,0),new THREE.Vector3(-.4,yT-1.6,0),0xffc233,7),
+    grid:stream(new THREE.Vector3(11,3.6,-5),new THREE.Vector3(W/2+.1,2.2,-1.2),0xffffff,10),
+    bat:stream(new THREE.Vector3(-5.8,1.0,2.2),new THREE.Vector3(-W/2,1.1,1.6),0x4dffa6,7),
+    pz:stream(new THREE.Vector3(0,.25,5),new THREE.Vector3(0,.7,D/2),0xb99cff,5)
+  };
+  // labels
+  const labels=[];
+  function tag(name,pos){const el=document.createElement('div');el.className='tag';el.innerHTML=name+'<em></em>';box.appendChild(el);labels.push({el,em:el.querySelector('em'),pos:pos.clone(),name})}
+  tag('Solar Panels',new THREE.Vector3(-.4,yT+1.0,.1));
+  tag('Battery',new THREE.Vector3(-5.8,1.35,2.2));
+  tag('Piezo Floor',new THREE.Vector3(0,.55,5));
+  tag('Chiller Plant',new THREE.Vector3(-5.7,1.6,-1.5));
+  tag('Grid',new THREE.Vector3(11,4.5,-5));
+
+  /* interaction */
+  const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
+  let down=null,sel=-1;
+  const cvs=renderer.domElement;
+  cvs.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY,moved:false,px:e.clientX,py:e.clientY};cvs.setPointerCapture(e.pointerId);idle=0});
+  cvs.addEventListener('pointermove',e=>{
+    if(!down)return;
+    const dx=e.clientX-down.px,dy=e.clientY-down.py;down.px=e.clientX;down.py=e.clientY;
+    if(Math.abs(e.clientX-down.x)+Math.abs(e.clientY-down.y)>5)down.moved=true;
+    theta-=dx*.008;phi=clamp(phi-dy*.006,.4,1.45);idle=0;
+  });
+  cvs.addEventListener('pointerup',e=>{
+    if(down&&!down.moved){
+      const r=cvs.getBoundingClientRect();
+      ptr.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+      ray.setFromCamera(ptr,camera);
+      const hit=ray.intersectObjects(floors)[0];
+      sel=hit?hit.object.userData.zone:-1;
+      showInfo();
+    }
+    down=null;
+  });
+  $('zin').onclick=()=>{radius=clamp(radius-2.5,10,38)};
+  $('zout').onclick=()=>{radius=clamp(radius+2.5,10,38)};
+  function showInfo(){
+    const zi=$('zinfo');
+    if(sel<0){zi.style.display='none';return}
+    const z=cur.zones[sel];
+    zi.style.display='block';
+    zi.innerHTML='<h4>'+ZONES[sel].n+' ('+ZONES[sel].fl+')</h4><table><tr><td>Occupancy</td><td class="num">'+Math.round(z.occ)+'%</td></tr><tr><td>Temperature</td><td class="num">'+z.temp.toFixed(1)+'°C</td></tr><tr><td>CO₂</td><td class="num">'+z.co2+' ppm</td></tr><tr><td>Lighting</td><td class="num">'+z.lux+' lux</td></tr><tr><td>Comfort</td><td class="num">'+(z.score==null?'unoccupied':Math.round(z.score))+'</td></tr><tr><td>Mode</td><td>'+MODELBL[z.mode]+'</td></tr></table>';
+  }
+  function resize(){
+    const w=box.clientWidth,h=box.clientHeight;
+    if(!w||!h)return;
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+    radius=Math.max(radius,w<520?30:0);
+  }
+  new ResizeObserver(resize).observe(box);resize();
+  const cCool=new THREE.Color(0x3b82c4),cWarm=new THREE.Color(0xf2a03a),cPre=new THREE.Color(0x19c8ff),cDr=new THREE.Color(0xffb627),tmpC=new THREE.Color();
+  const mixHex=(a,b,f)=>new THREE.Color(a).lerp(new THREE.Color(b),f);
+  const fogC=new THREE.Color();
+  scene3.ok=true;
+  scene3.update=function(s,dt,time){
+    floors.forEach((m,i)=>{
+      const z=s.zones[i];
+      tmpC.copy(cCool).lerp(cWarm,clamp(z.occ/100,0,1));
+      if(s.mode==='precool')tmpC.lerp(cPre,.45);else if(s.mode==='dr')tmpC.lerp(cDr,.25);
+      m.material.color.copy(tmpC);
+      m.material.opacity=.07+.13*clamp(z.occ/100,0,1)+(sel===i?.14:0);
+      lightMats[i].emissiveIntensity=z.occ<5?.18:.35+z.lightPct/100*.95;
+      screenMats[i].emissiveIntensity=z.occ<5?0:.5+.4*Math.sin(time*2+i);
+      const cnt=Math.ceil(z.occ/100*6);
+      peopleG[i].forEach((p,k)=>{p.visible=k<cnt&&!(i===4&&k%2)});
+      const dOp=s.mode==='precool'?.20+.08*Math.sin(time*4+i):s.mode==='dr'?.07:(s.mode==='normal'&&z.occ>5?.08:0);
+      diffs[i].forEach((c,k)=>{c.material.opacity=dOp;c.scale.y=1+.08*Math.sin(time*5+k+i)});
+    });
+    const lp=s.zones.reduce((a,z)=>a+z.lightPct,0)/5/100;
+    warm1.intensity=.15+1.1*lp*(s.occ>5?1:.3);warm2.intensity=.15+1.1*lp*(s.occ>5?1:.3);
+    const a=(s.t-6)/12*Math.PI,up=Math.sin(a);
+    sun.visible=up>0;sunGlow.visible=up>0;
+    sun.position.set(-Math.cos(a)*34,Math.max(up,0)*20+2,-26);sunGlow.position.copy(sun.position);
+    sunL.position.set(sun.position.x*.4,Math.max(5,sun.position.y+2),8);
+    const dayF=clamp(up*1.6,0,1);
+    sunL.intensity=.15+1.0*dayF;hemi.intensity=.4+.35*dayF;
+    const sky1=mixHex(0x050c1e,0x1b4d86,dayF),sky2=mixHex(0x0d1d40,0x3d86b8,dayF);
+    box.style.background='linear-gradient(180deg,#'+sky1.getHexString()+',#'+sky2.getHexString()+' 70%)';
+    fogC.copy(sky2).lerp(sky1,.35);scene.fog.color.copy(fogC);gMat.color.copy(fogC).multiplyScalar(.7);
+    solMat.emissiveIntensity=.12+1.1*s.solFrac;
+    fans.forEach((f,i)=>{f.rotation.y+=dt*(1+s.hvac/10)*(i===1?1.25:1)});
+    cts.forEach(c=>{c.scale.y=1+.03*Math.sin(time*6)});
+    const foot=clamp(s.occ/100,0,1);
+    padGlow.material.opacity=.35+.65*foot*(.6+.4*Math.sin(time*3));padGlow.scale.setScalar(2.6+2.0*foot);
+    const rp=(time*.8)%1;ring.scale.setScalar(1+rp*3.2);ringM.opacity=(1-rp)*.7*foot;
+    socBar.scale.x=Math.max(.02,s.socPct);socBar.position.x=-5.8-(1-Math.max(.02,s.socPct))*.75;
+    lamp.material.color.set(s.cls==='peak'?0xff5a4a:s.cls==='off'?0x3fd68a:0xaab2bd);
+    doorGlow.material.opacity=.3+.7*(1-dayF*.6);
+    carA.position.set(((time*1.4)%30)-15,0,8.65);carA.rotation.y=0;
+    carB.position.set(15-((time*1.1+9)%30),0,9.75);carB.rotation.y=Math.PI;
