@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: voltsense-ml-api
+    runtime: python
+    buildCommand: pip install -r ml/requirements-api.txt
+    startCommand: python ml/api.py
