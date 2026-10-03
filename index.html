@@ -1178,7 +1178,71 @@ function frame(now){
   cur=snap(t);
   if(now-lastUi>90){lastUi=now;updateUI(cur)}
   if(scene3.ok)scene3.update(cur,dt,clock);
-  requestAnimationFrame(frame);
+  
+/* ---------- live ML forecast API connection ---------- */
+const ML_API = "https://voltsense-ml-api.onrender.com/predict";
+(function mountLiveML(){
+  const sec = document.createElement('section');
+  sec.id = 'live-ml';
+  sec.innerHTML = `
+    <div class="sec-head">
+      <h2>Live ML Forecast Engine</h2>
+      <p>Website-connected Random Forest API using the current dashboard telemetry as model inputs.</p>
+    </div>
+    <div class="grid2e">
+      <div class="p" style="--acc:var(--violet)">
+        <h3>⚡ Predicted Building Load <span class="chip ok" id="mlStatus">Connecting…</span></h3>
+        <div class="r2"><span>Next-load estimate</span><b class="nv" id="mlPred">-- kW</b></div>
+        <div class="note" id="mlDetail">Waiting for the Python ML service…</div>
+      </div>
+      <div class="p">
+        <h3>Model Inputs</h3>
+        <div class="r2"><span>Hour</span><b class="mono" id="mlHour">--</b></div>
+        <div class="r2"><span>Occupancy</span><b class="mono" id="mlOcc">-- %</b></div>
+        <div class="r2"><span>Temperature</span><b class="mono" id="mlTemp">-- °C</b></div>
+        <div class="r2"><span>Setpoint</span><b class="mono">24 °C</b></div>
+      </div>
+    </div>`;
+  const main = document.querySelector('main');
+  main.insertBefore(sec, main.firstElementChild);
+
+  async function runLiveML(){
+    try{
+      const zones = cur.zones || [];
+      const occ = zones.length ? zones.reduce((a,z)=>a+z.occ,0)/zones.length : 50;
+      const temp = zones.length ? zones.reduce((a,z)=>a+z.temp,0)/zones.length : 28;
+      const payload = {
+        hour: cur.t,
+        occupancy: occ,
+        temperature: temp,
+        humidity: 52,
+        setpoint: 24
+      };
+      const res = await fetch(ML_API, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      $('mlPred').textContent = Number(data.predicted_load_kw).toFixed(2)+' kW';
+      $('mlHour').textContent = Number(payload.hour).toFixed(1);
+      $('mlOcc').textContent = Math.round(payload.occupancy)+' %';
+      $('mlTemp').textContent = payload.temperature.toFixed(1)+' °C';
+      $('mlStatus').textContent = 'API ONLINE';
+      $('mlStatus').className = 'chip ok';
+      $('mlDetail').textContent = 'RandomForestRegressor • live request • synthetic training telemetry';
+    }catch(err){
+      $('mlStatus').textContent = 'API OFFLINE';
+      $('mlStatus').className = 'chip bad';
+      $('mlDetail').textContent = 'ML service unavailable; dashboard simulation continues normally.';
+    }
+  }
+  setTimeout(runLiveML, 800);
+  setInterval(runLiveML, 5000);
+})();
+
+requestAnimationFrame(frame);
 }
 $('tslider').addEventListener('input',e=>{t=parseFloat(e.target.value)});
 $('play').addEventListener('click',()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play';$('play').classList.toggle('on',playing)});
